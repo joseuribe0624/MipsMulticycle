@@ -1,2 +1,2 @@
 # MipsMulticycle
-this repository is about a mips multicycle using vhdl.
+Multicycle implementation of MIPS using VHDL.
