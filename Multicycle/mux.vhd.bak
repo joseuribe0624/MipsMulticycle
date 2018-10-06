@@ -1,0 +1,15 @@
+library iee;
+use ieee.std_logic_1164.all;
+
+entity mux is
+	port(
+		a, b: in std_logic_vector ( downto 0);
+		s: in std_logic;
+		c: out std_logic_vector( downto 0);
+	);
+end mux;
+
+architecture beh of mux is
+	begin
+		c <= a when (c = '0') else b;
+end beh;
