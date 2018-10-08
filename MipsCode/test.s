@@ -1,3 +1,6 @@
 .data
+    test1:  .asciiz "testing the repo"
+
 .text
-.end
+    main:
+        addi $t0, $0, 1000
