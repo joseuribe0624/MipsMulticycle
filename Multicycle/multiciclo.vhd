@@ -10,7 +10,8 @@ entity CPU is
 end CPU;
 
 architecture behavior of CPU is
-	signal pc_current: std_logic_vector (31 downto 0);
+	---agregue alu_out  address data
+	signal pc_current,alu_out,address,data: std_logic_vector (31 downto 0);
 	signal pc_next, pc_add, pc_jump, pc_branch: std_logic_vector (31 downto 0);
 	signal instruction: std_logic_vector (31 downto 0);
 	-- Decode
@@ -96,7 +97,7 @@ architecture behavior of CPU is
 	end component;
 	
 	component instructionRegister
-		port map(
+		port (
 			IRWrite: in  std_logic;
 			instrucInput: in  std_logic_vector(31 downto 0);
 			opCode: out std_logic_vector(5 downto 0);
@@ -112,8 +113,8 @@ architecture behavior of CPU is
 	component mux
 		generic (n: natural:= 31);
 		port (
-			a, b: in std_logic_vector (n downto 0),
-			s: in std_logic,
+			a, b: in std_logic_vector (n downto 0);
+			s: in std_logic;
 			c: out std_logic_vector(n downto 0)
 		);
 	end component;
@@ -139,56 +140,58 @@ architecture behavior of CPU is
 
 	
 	MUXPC: mux generic map(31) port map(
-		a <= pc_current,
-		b <= alu_out,
-		s <= , -- Unidad de control
-		c <= address
+	--MUXPC: mux port map(
+		a => pc_current,
+		b => alu_out,
+		c => address,
+		--s => '0'-- Unidad de control
+		
 	);
 	
 	RAM:  Memory port map (
 		CLK => CLK,
-		MemWrite => ,  -- Unidad de control
-		MemRead => ,  -- Unidad de control
+		--MemWrite => ,  -- Unidad de control
+		--MemRead => ,  -- Unidad de control
 		address => address,
 		writeData => B,
 		readData => data
 	);
 
 	IR: instructionRegister port map(
-		IRWrite <= , -- Unidad de control
-		instrucInput <= data,
-		opCode <= ,
-		regRs <= RS,
-		regRt <= RT,
-		regRd <= RD,
-		imm <= imm,
-		jumpAddr <= ,
-		funcCode <= 
+		--IRWrite <= , -- Unidad de control
+		instrucInput => data,
+		--opCode <= ,
+		regRs => RS,
+		regRt => RT,
+		regRd => RD,
+		imm => imm
+		--jumpAddr <= ,
+		--funcCode <= 
 	);
 	
 	MUXREG: mux generic map(15) port map(
-		a <= RT,
-		b <= RD,
-		s <= , -- Unidad de control
-		c <= writeRegister
+		a => RT,
+		b => RD,
+		--s <= , -- Unidad de control
+		c => writeRegister
 	);
 	
 	MUXREGDATA: mux generic map(31) port map(
-		a <= alu_out,
-		b <= data,
-		s <= , -- Unidad de control
-		c <= registerWriteData
+		a => alu_out,
+		b => data,   -----------cambiar el data que tambien esta definido en port IR
+		--s => , -- Unidad de control
+		c => registerWriteData
 	);
 	
 	MUXREG: mux generic map(15) port map(
-		a <= RT,
-		b <= RD,
-		s <= , -- Unidad de control
-		c <= writeRegister
+		a => RT,
+		b => RD,
+		--s => , -- Unidad de control,
+		c => writeRegister
 	);
 	
 	Registers: RegisterFile port map(
-		registerWrite => , -- Unidad de control
+		--registerWrite => , -- Unidad de control
 		registerRead1 => RS,
 		registerRead2 => RT,
 		writeRegister => writeRegister,
@@ -209,61 +212,51 @@ architecture behavior of CPU is
 	);
 	
 	MUXALUA: mux generic map(15) port map(
-		a <= pc_current,
-		b <= A,
-		s <= , -- Unidad de control
-		c <= A1 -- ALU IN
+		a => pc_current,
+		b => A,
+		--s => , -- Unidad de control
+		c => A1 -- ALU IN
 	);
 	
 	MUXALUB: mux_4_to_1 port map(
-		A <= B,
-		B <= "00000000000000000000000000000100",
-		C <= imm_extend,
-		D <= imm_extend_left,
-		S0 <= , -- Unidad de control
-		S1 <= , -- Unidad de control
-		Z <= B1 -- ALU IN
+		A => B,
+		B => "00000000000000000000000000000100",
+		C => imm_extend,
+		D => imm_extend_left,
+		--S0 => , -- Unidad de control
+		--S1 => , -- Unidad de control
+		Z => B1 -- ALU IN
 	);
-	
-	--- Hasta aqui
 
 	-- ALU
 	ALU_INS: alu port map(
-		A => A,
+		A => A1,
 		B => B1,
-		alu_control => ALU_OPERATION,
+		-- alu_control => ALU_OPERATION, Unidad de control
 		zero => zero,
-		result => result
+		result => alu_result
 	);
 
+	alu_out <= alu_result;
+	
 	-- ALU control
-	ALUCONTROL: controlAlu port map(
-		functions => instruction(5 downto 0),
-		operationAlu => ALUOp,
-		alu_control => ALU_OPERATION
-	);
+	--ALUCONTROL: controlAlu port map(
+	--	functions => instruction(5 downto 0),
+	--	operationAlu => ALUOp,
+	--	alu_control => ALU_OPERATION
+	--);
 
-	-- Mux 
-	final <= readData when (MemtoReg = '1') else result;
-
-	ADD1: adder port map(
-		a => pc_current,
-		b => "00000000000000000000000000000100",
-		c => pc_add
-	);
 	
-	and_1 <= zero and Branch;
-	
-	addressBranch <= pc_add + shiftleft2;
-	-- Mux
-	pc_branch  <=	addressBranch when (and_1 = '1') else pc_add;
-	
-	SHIFT_JUMP1: shift_jump port map(
-		a => instruction(25 downto 0),
+	SHIFT_JUMP: shift_jump port map(
+		a => imm,
 		b => jump_signal
 	);
 
-	pc_jump <= pc_add(31 downto 28) & jump_signal ;
-	pc_next <= pc_jump when (jump = '1') else pc_branch;
+	
+	address_jump <= pc_current(31 downto 28) & jump_signal;
+	
+	pc_next <=  alu_result when (PCsrc = "00") else
+					alu_out when (PCsrc = "01") else
+					address_jump when (PCsrc = "10");
 	
 end behavior;
