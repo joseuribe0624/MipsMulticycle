@@ -16,8 +16,10 @@ architecture behavior of CPU is
 	signal instruction: std_logic_vector (31 downto 0);
 	-- Decode
 	signal writeRegister: std_logic_vector (4 downto 0);
-	signal RegDst, RegWrite, Branch, MemWrite, MemRead, jump, MemtoReg, ALUSrc: std_logic;
-	signal ALUOp: std_logic_vector (1 downto 0);
+	signal Branch, PCwrite, IorD, MemRead, MemWrite, MemtoReg, IRWrite, ALUSrcA, RegWrite, RegDst: std_logic;
+	signal PCSrc, ALUOp, ALUSrcB: std_logic_vector (1 downto 0);
+	signal next_state: std_logic_vector (3 downto 0);
+	signal opcode: std_logic_vector (5 downto 0);
 	
 	signal extend_final, shiftleft2, addressBranch: std_logic_vector (31 downto 0);
 	signal extend: std_logic_vector (15 downto 0);
@@ -31,6 +33,14 @@ architecture behavior of CPU is
 	signal readData: std_logic_vector(31 downto 0);
 	signal jump_signal: std_logic_vector(27 downto 0);
 
+	component Control port(
+		opcode: in std_logic_vector (5 downto 0),
+		clk, reset: in std_logic,
+		Branch, PCwrite, IorD, MemRead, MemWrite, MemtoReg, IRWrite, ALUSrcA, RegWrite, RegDst: out std_logic,
+		PCSrc, ALUOp, ALUSrcB: out std_logic_vector (1 downto 0),
+	);
+	end component;
+	
 	component RegisterFile port (
 		clk: in std_logic;
 		registerWrite: in std_logic;
@@ -43,7 +53,6 @@ architecture behavior of CPU is
 	);
 	end component;
 
-	---esta bien
 	component sign_extend is
 	port (
 		a: in std_logic_vector(15 downto 0);
@@ -137,30 +146,27 @@ architecture behavior of CPU is
 				pc_current <= pc_next;
 			end if;
 	end process;
-
 	
 	MUXPC: mux generic map(31) port map(
-	--MUXPC: mux port map(
 		a => pc_current,
 		b => alu_out,
 		c => address,
-		--s => '0'-- Unidad de control
-		
+		s => IorD
 	);
 	
 	RAM:  Memory port map (
 		CLK => CLK,
-		--MemWrite => ,  -- Unidad de control
-		--MemRead => ,  -- Unidad de control
+		MemWrite => MemWrite,
+		MemRead => MemRead,
 		address => address,
 		writeData => B,
 		readData => data
 	);
-
+	
 	IR: instructionRegister port map(
-		--IRWrite <= , -- Unidad de control
+		IRWrite <= IRWrite,
 		instrucInput => data,
-		--opCode <= ,
+		opCode <= opcode,
 		regRs => RS,
 		regRt => RT,
 		regRd => RD,
@@ -169,29 +175,41 @@ architecture behavior of CPU is
 		--funcCode <= 
 	);
 	
+	Control port map(
+		opcode => opcode,
+		clk => CLK,
+		reset => RESET,
+		Branch => Branch,
+		PCwrite => PCwrite,
+		IorD => IorD,
+		MemRead => MemRead,
+		MemWrite => MemWrite,
+		MemtoReg => MemtoReg,
+		IRWrite => IRWrite,
+		ALUSrcA => ALUSrcA,
+		RegWrite => RegWrite,
+		RegDst => RegDst,
+		PCSrc => PCSrc,
+		ALUOp => ALUOp,
+		ALUSrcB => ALUSrcB
+	);
+	
 	MUXREG: mux generic map(15) port map(
 		a => RT,
 		b => RD,
-		--s <= , -- Unidad de control
+		s => RegDst, 
 		c => writeRegister
 	);
 	
 	MUXREGDATA: mux generic map(31) port map(
 		a => alu_out,
 		b => data,   -----------cambiar el data que tambien esta definido en port IR
-		--s => , -- Unidad de control
+		s => MemToReg,
 		c => registerWriteData
 	);
 	
-	MUXREG: mux generic map(15) port map(
-		a => RT,
-		b => RD,
-		--s => , -- Unidad de control,
-		c => writeRegister
-	);
-	
 	Registers: RegisterFile port map(
-		--registerWrite => , -- Unidad de control
+		registerWrite => , RegWrite,
 		registerRead1 => RS,
 		registerRead2 => RT,
 		writeRegister => writeRegister,
@@ -214,7 +232,7 @@ architecture behavior of CPU is
 	MUXALUA: mux generic map(15) port map(
 		a => pc_current,
 		b => A,
-		--s => , -- Unidad de control
+		s => ALUSrcA,
 		c => A1 -- ALU IN
 	);
 	
@@ -223,8 +241,8 @@ architecture behavior of CPU is
 		B => "00000000000000000000000000000100",
 		C => imm_extend,
 		D => imm_extend_left,
-		--S0 => , -- Unidad de control
-		--S1 => , -- Unidad de control
+		S0 => ALUSrcB(0),
+		S1 => ALUSrcB(1),
 		Z => B1 -- ALU IN
 	);
 
