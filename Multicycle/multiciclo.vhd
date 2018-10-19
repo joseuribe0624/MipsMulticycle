@@ -1,43 +1,48 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.std_logic_unsigned.all;
-use ieee.numeric_std.all;
 
-entity CPU is
+entity multiciclo is
 	port(
 		CLK, RESET: in std_logic
 	);
-end CPU;
+end multiciclo;
 
-architecture behavior of CPU is
+architecture behavior of multiciclo is
 	---agregue alu_out  address data
 	signal pc_current,alu_out,address,data: std_logic_vector (31 downto 0);
 	signal pc_next, pc_add, pc_jump, pc_branch: std_logic_vector (31 downto 0);
 	signal instruction: std_logic_vector (31 downto 0);
+	
+	signal after_address: std_logic_vector (25 downto 0);
+	signal RS, RD, RT: std_logic_vector(4 downto 0);
+	signal funct: std_logic_vector (5 downto 0);
+	signal imm: std_logic_vector(15 downto 0);
 	-- Decode
 	signal writeRegister: std_logic_vector (4 downto 0);
-	signal Branch, PCwrite, IorD, MemRead, MemWrite, MemtoReg, IRWrite, ALUSrcA, RegWrite, RegDst: std_logic;
+	signal Branch, PCWrite, IorD, MemRead, MemWrite, MemtoReg, IRWrite, ALUSrcA, RegWrite, RegDst: std_logic;
 	signal PCSrc, ALUOp, ALUSrcB: std_logic_vector (1 downto 0);
 	signal next_state: std_logic_vector (3 downto 0);
 	signal opcode: std_logic_vector (5 downto 0);
 	
-	signal extend_final, shiftleft2, addressBranch: std_logic_vector (31 downto 0);
+	signal imm_extend_left, imm_extend, extend_final, shiftleft2, address_jump: std_logic_vector (31 downto 0);
 	signal extend: std_logic_vector (15 downto 0);
 	
 	signal and_1: std_logic;
 	-- Register, ALU
-	signal A, B, B1, result, final: std_logic_vector(31 downto 0);
+	signal registerWriteData: std_logic_vector(31 downto 0);
+	signal A, A1, B, B1, result, final: std_logic_vector(31 downto 0);
 	signal zero: std_logic;
-	signal ALU_OPERATION: std_logic_vector(3 downto 0);
+	signal alu_operation: std_logic_vector(3 downto 0);
 	-- Data
-	signal readData: std_logic_vector(31 downto 0);
+	signal alu_result: std_logic_vector(31 downto 0);
 	signal jump_signal: std_logic_vector(27 downto 0);
 
 	component Control port(
-		opcode: in std_logic_vector (5 downto 0),
-		clk, reset: in std_logic,
-		Branch, PCwrite, IorD, MemRead, MemWrite, MemtoReg, IRWrite, ALUSrcA, RegWrite, RegDst: out std_logic,
-		PCSrc, ALUOp, ALUSrcB: out std_logic_vector (1 downto 0),
+		opcode: in std_logic_vector (5 downto 0);
+		clk, reset: in std_logic;
+		Branch, PCWrite, IorD, MemRead, MemWrite, MemtoReg, IRWrite, ALUSrcA, RegWrite, RegDst: out std_logic;
+		PCSrc, ALUOp, ALUSrcB: out std_logic_vector (1 downto 0)
 	);
 	end component;
 	
@@ -76,12 +81,10 @@ architecture behavior of CPU is
 	);
 	end component;
 	
-	
-	---esto es lo mismo
-	component controlAlu port (
+	component controlAlu  port (
 		functions: in std_logic_vector(5 downto 0);
-		operationAlu: in std_logic_vector(1 downto 0);
-		alu_control: out std_logic_vector(3 downto 0)
+		ALUOp: in std_logic_vector(1 downto 0);
+		alu_operation: out std_logic_vector(3 downto 0)
 	);
 	end component;
 	
@@ -123,16 +126,17 @@ architecture behavior of CPU is
 		generic (n: natural:= 31);
 		port (
 			a, b: in std_logic_vector (n downto 0);
-			s: in std_logic;
+			s: std_logic;
 			c: out std_logic_vector(n downto 0)
 		);
 	end component;
 	
 	component mux_4_to_1
+		generic (n: natural:= 31);
 		port(
-			A,B,C,D : in STD_LOGIC;
-			S0,S1: in STD_LOGIC;
-			Z: out STD_LOGIC
+			A,B,C,D : in std_logic_vector (n downto 0);
+			S: in std_logic_vector(1 downto 0);
+			Z: out std_logic_vector (n downto 0)
 		);
 	end component;
 
@@ -142,8 +146,10 @@ architecture behavior of CPU is
 		begin 
 			if(RESET = '1') then
 				pc_current <= "00000000000000000000000000000000";
-			elsif(rising_edge(CLK)) then
-				pc_current <= pc_next;
+			elsif(CLK'event and CLK='1') then
+				if ( (zero='1' and Branch='1') or PCWrite='1') then
+					pc_current <= pc_next;
+				end if;
 			end if;
 	end process;
 	
@@ -164,23 +170,23 @@ architecture behavior of CPU is
 	);
 	
 	IR: instructionRegister port map(
-		IRWrite <= IRWrite,
+		IRWrite => IRWrite,
 		instrucInput => data,
-		opCode <= opcode,
+		opCode => opcode,
 		regRs => RS,
 		regRt => RT,
 		regRd => RD,
-		imm => imm
-		--jumpAddr <= ,
-		--funcCode <= 
+		imm => imm,
+		jumpAddr => after_address,
+		funcCode => funct
 	);
 	
-	Control port map(
+	Unit_Control: Control port map(
 		opcode => opcode,
 		clk => CLK,
 		reset => RESET,
 		Branch => Branch,
-		PCwrite => PCwrite,
+		PCWrite => PCWrite,
 		IorD => IorD,
 		MemRead => MemRead,
 		MemWrite => MemWrite,
@@ -194,7 +200,7 @@ architecture behavior of CPU is
 		ALUSrcB => ALUSrcB
 	);
 	
-	MUXREG: mux generic map(15) port map(
+	MUXREG: mux generic map(4) port map(
 		a => RT,
 		b => RD,
 		s => RegDst, 
@@ -209,7 +215,8 @@ architecture behavior of CPU is
 	);
 	
 	Registers: RegisterFile port map(
-		registerWrite => , RegWrite,
+		clk => clk,
+		registerWrite => RegWrite,
 		registerRead1 => RS,
 		registerRead2 => RT,
 		writeRegister => writeRegister,
@@ -229,20 +236,19 @@ architecture behavior of CPU is
 		b => imm_extend_left
 	);
 	
-	MUXALUA: mux generic map(15) port map(
+	MUXALUA: mux generic map(31) port map(
 		a => pc_current,
 		b => A,
 		s => ALUSrcA,
 		c => A1 -- ALU IN
 	);
 	
-	MUXALUB: mux_4_to_1 port map(
+	MUXALUB: mux_4_to_1 generic map(31) port map(
 		A => B,
 		B => "00000000000000000000000000000100",
 		C => imm_extend,
 		D => imm_extend_left,
-		S0 => ALUSrcB(0),
-		S1 => ALUSrcB(1),
+		S => ALUSrcB,
 		Z => B1 -- ALU IN
 	);
 
@@ -250,31 +256,31 @@ architecture behavior of CPU is
 	ALU_INS: alu port map(
 		A => A1,
 		B => B1,
-		-- alu_control => ALU_OPERATION, Unidad de control
+		alu_control => alu_operation,
 		zero => zero,
 		result => alu_result
 	);
 
-	alu_out <= alu_result;
-	
-	-- ALU control
-	--ALUCONTROL: controlAlu port map(
-	--	functions => instruction(5 downto 0),
-	--	operationAlu => ALUOp,
-	--	alu_control => ALU_OPERATION
-	--);
-
-	
-	SHIFT_JUMP: shift_jump port map(
-		a => imm,
-		b => jump_signal
+	ALUCONTROL: controlAlu port map(
+		functions => funct,
+		ALUOp => ALUOp,
+		alu_operation => alu_operation
 	);
 
+	SHIFT_JUMP_INS: shift_jump port map(
+		a => after_address,
+		b => jump_signal
+	);
 	
 	address_jump <= pc_current(31 downto 28) & jump_signal;
 	
-	pc_next <=  alu_result when (PCsrc = "00") else
-					alu_out when (PCsrc = "01") else
-					address_jump when (PCsrc = "10");
+	MUXNEXTPC: mux_4_to_1 generic map(31) port map(
+		A => alu_result,
+		B => alu_out,
+		C => address_jump,
+		D => "00000000000000000000000000000000",
+		S => PCSrc,
+		Z => pc_next
+	);
 	
 end behavior;

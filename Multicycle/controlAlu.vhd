@@ -5,20 +5,15 @@ use IEEE.numeric_std.all;
 entity controlAlu is
 port (
 	functions: in std_logic_vector(5 downto 0);
-	operationAlu: in std_logic_vector(1 downto 0);
-	alu_control: out std_logic_vector(3 downto 0)
+	ALUOp: in std_logic_vector(1 downto 0);
+	alu_operation: out std_logic_vector(3 downto 0)
 );
 end controlAlu;
 
 architecture behavioral of controlAlu is  
 	begin
-	---add
-	alu_control <= "0010" when (operationAlu="00" or (operationAlu="10" and functions="100000")) else
-					"0110" when(operationAlu="01" or (operationAlu="10" and functions="100010")) else
-					"0011" when(operationAlu="11")else
-					"0000" when(operationAlu="10" and functions="100100") else
-					"0001" when(operationAlu="10" and functions="100101") else
-					"0111" when(operationAlu="10" and functions="101010") else
-					"0000";
+	 alu_operation(2) <= ( ALUOp(0) or ( ALUOp(1)and functions(1)));
+    alu_operation(1) <= ( not(ALUOp(1)) or not(functions(2)));
+    alu_operation(0) <= (( ALUOp(1) )and( functions(3) or functions(0)));
 end behavioral;
 

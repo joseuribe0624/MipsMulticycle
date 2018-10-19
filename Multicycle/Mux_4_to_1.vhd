@@ -2,25 +2,17 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.all;
  
 entity mux_4_to_1 is
- port (
-     A, B, C, D : in STD_LOGIC;
-     S0, S1:      in STD_LOGIC;
-     Z:           out STD_LOGIC
-  );
+	generic (n: natural:= 31);
+	port (
+		A, B, C, D : in std_logic_vector(n downto 0);
+		S: in std_logic_vector(1 downto 0);
+		Z: out std_logic_vector(n downto 0)
+	);
 end mux_4_to_1;
  
 architecture arch of mux_4_to_1 is
   begin
-  process (A, B, C, D, S0, S1) is
-     begin
-     if (S0 = '0' and S1 = '0') then
-       Z <= A;
-     elsif (S0 = '1' and S1 = '0') then
-       Z <= B;
-     elsif (S0 = '0' and S1 = '1') then
-       Z <= C;
-     else
-       Z <= D;
-     end if;
-  end process;
+	Z <= A when (S = "00") else
+		  B when (S = "01") else
+		  C when (S = "10") else D;
 end arch;
