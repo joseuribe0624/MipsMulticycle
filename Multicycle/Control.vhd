@@ -1,4 +1,4 @@
-	library ieee;
+library ieee;
 use ieee.std_logic_1164.all;
 
 entity Control is
@@ -10,11 +10,12 @@ entity Control is
 	);
 end Control;
 
--- LW: 100011
--- SW: 101011
--- R: 000000
--- BEQ: 000100
--- J: 000010
+-- (En muchos estados, no se si AluSrcA u MemtoReg sí deberian ser 1, creo que no importan)
+-- LW: 100011 <<< (enrealidad es JUMP)
+-- SW: 101011 << (otra vez JUMP)
+-- R: 000000 << (ok, hubo que cambiar valores de regdst y memtoReg)
+-- BEQ: 000100 << (ok, hubo que cambiar los valores de PCsrc (10 => 01) y AluOp (00 => 01))
+-- J: 000010 << (ok, no hubo que cambiar nada)
 
 architecture behavior of Control is
 	signal state: std_logic_vector (5 downto 0);
@@ -119,13 +120,13 @@ architecture behavior of Control is
 					IorD <= 'X';
 					MemtoReg <= 'X';
 				elsif (state = "001001") then
-					PCSrc <= "10";
+					PCSrc <= "01";
+					ALUOp <= "01";
 					PCWrite <= '1';
 					next_state <= "000000";
 					--
 					ALUSrcA <= '1';
 					ALUSrcB <= "00";
-					ALUOp <= "00";
 					IRWrite <= '0';
 					MemWrite <= '0';
 					MemRead <= '0';
@@ -167,8 +168,8 @@ architecture behavior of Control is
 					Branch <= 'X';
 					PCSrc <= "00";
 				else
-					RegDst <= '0';
-					MemtoReg <= '1';
+					RegDst <= '1';
+					MemtoReg <= '0';
 					RegWrite <= '1';
 					next_state <= "000000";
 					--
