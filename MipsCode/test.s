@@ -1,3 +1,7 @@
+#TODO: Hay que recordarle a Carlos que necesitamos el valor constante del registro 0 para que sea,
+# pues 0. Se le debe quemar el valor por defecto siempre. A lo mejor eso ya está implementado,
+# pero de todas formas verifica.
+
 #TODO: Cambiar los registros de apuntadores a registros s0..n, por si acaso.
 # o más bien, definir bien con qué voy a usar cada cosa, para que no se nos
 # crucen los usos entre registros.
