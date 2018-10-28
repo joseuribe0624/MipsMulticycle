@@ -10,35 +10,35 @@ end multiciclo;
 
 architecture behavior of multiciclo is
 	---agregue alu_out  address data
-	signal pc_current, alu_out,address, mdr, data: std_logic_vector (31 downto 0);
-	signal pc_next, pc_add, pc_jump, pc_branch: std_logic_vector (31 downto 0);
-	signal instruction: std_logic_vector (31 downto 0);
+	signal pc_current, alu_out,address, mdr, data: std_logic_vector (15 downto 0);
+	signal pc_next, pc_add, pc_jump, pc_branch: std_logic_vector (15 downto 0);
+	signal instruction: std_logic_vector (15 downto 0);
 	
-	signal after_address: std_logic_vector (25 downto 0);
-	signal RS, RD, RT: std_logic_vector(4 downto 0);
-	signal funct: std_logic_vector (5 downto 0);
-	signal imm: std_logic_vector(15 downto 0);
+	signal after_address: std_logic_vector (11 downto 0);
+	signal RS, RD, RT: std_logic_vector(2 downto 0);
+	signal funct: std_logic_vector (2 downto 0);
+	signal imm: std_logic_vector(5 downto 0);
 	-- Decode
-	signal writeRegister: std_logic_vector (4 downto 0);
+	signal writeRegister: std_logic_vector (2 downto 0);
 	signal Branch, PCWrite, IorD, MemRead, MemWrite, MemtoReg, IRWrite, ALUSrcA, RegWrite, RegDst: std_logic;
 	signal PCSrc, ALUOp, ALUSrcB: std_logic_vector (1 downto 0);
 	signal next_state: std_logic_vector (3 downto 0);
-	signal opcode: std_logic_vector (5 downto 0);
+	signal opcode: std_logic_vector (3 downto 0);
 	
-	signal imm_extend_left, imm_extend, extend_final, shiftleft2, address_jump: std_logic_vector (31 downto 0);
+	signal imm_extend_left, imm_extend, extend_final, shiftleft2, address_jump: std_logic_vector (15 downto 0);
 	signal extend: std_logic_vector (15 downto 0);
 	
 	signal and_1: std_logic;
 	-- Register, ALU
-	signal registerWriteData: std_logic_vector(31 downto 0);
-	signal data_A, data_B, A, A1, B, B1, result, final: std_logic_vector(31 downto 0);
+	signal registerWriteData: std_logic_vector(15 downto 0);
+	signal data_A, data_B, A, A1, B, B1, result, final: std_logic_vector(15 downto 0);
 	signal zero: std_logic;
-	signal alu_operation: std_logic_vector(3 downto 0);
+	signal alu_operation: std_logic_vector(2 downto 0);
 	-- Data
-	signal jump_signal: std_logic_vector(27 downto 0);
+	signal jump_signal: std_logic_vector(13 downto 0);
 
 	component Control port(
-		opcode: in std_logic_vector (5 downto 0);
+		opcode: in std_logic_vector (3 downto 0);
 		clk, reset: in std_logic;
 		Branch, PCWrite, IorD, MemRead, MemWrite, MemtoReg, IRWrite, ALUSrcA, RegWrite, RegDst: out std_logic;
 		PCSrc, ALUOp, ALUSrcB: out std_logic_vector (1 downto 0)
@@ -47,65 +47,65 @@ architecture behavior of multiciclo is
 	
 	component RegisterFile port (
 		registerWrite: in std_logic;
-		registerRead1: in std_logic_vector(4 downto 0);
-		registerRead2: in std_logic_vector(4 downto 0);
-		writeRegister: in std_logic_vector(4 downto 0);
-		registerWriteData: in std_logic_vector(31 downto 0);
-		registerReadData1: out std_logic_vector(31 downto 0);
-		registerReadData2: out std_logic_vector(31 downto 0)
+		registerRead1: in std_logic_vector(2 downto 0);
+		registerRead2: in std_logic_vector(2 downto 0);
+		writeRegister: in std_logic_vector(2 downto 0);
+		registerWriteData: in std_logic_vector(15 downto 0);
+		registerReadData1: out std_logic_vector(15 downto 0);
+		registerReadData2: out std_logic_vector(15 downto 0)
 	);
 	end component;
 
 	component sign_extend is
 	port (
-		a: in std_logic_vector(15 downto 0);
-		b: out std_logic_vector(31 downto 0)
+		a: in std_logic_vector(5 downto 0);
+		b: out std_logic_vector(15 downto 0)
 	);
 	end component;
 	
 	
-	component shift_2 is
+	component shift is
 	port (
-		a: in std_logic_vector(31 downto 0);
-		b: out std_logic_vector(31 downto 0)
+		a: in std_logic_vector(15 downto 0);
+		b: out std_logic_vector(15 downto 0)
 	);
 	end component;
 	
 	
 	component shift_jump is
 	port (
-		a: in std_logic_vector(25 downto 0);
-		b: out std_logic_vector(27 downto 0)
+		a: in std_logic_vector(11 downto 0);
+		b: out std_logic_vector(13 downto 0)
 	);
 	end component;
 	
 	component controlAlu  port (
-		functions: in std_logic_vector(5 downto 0);
+		functions: in std_logic_vector(2 downto 0);
 		ALUOp: in std_logic_vector(1 downto 0);
-		alu_operation: out std_logic_vector(3 downto 0)
+		alu_operation: out std_logic_vector(2 downto 0)
 	);
 	end component;
 	
 	---identica
 	component alu port (
-		A, B : in std_logic_vector (31 downto 0);
-		alu_control : in std_logic_vector (3 downto 0);
+		A, B : in std_logic_vector (15 downto 0);
+		alu_control : in std_logic_vector (2 downto 0);
 		zero : out std_logic;
-		result : out std_logic_vector (31 downto 0)
+		result : out std_logic_vector (15 downto 0)
 	);
 	end component;
 
 	component Memory port (
 		MemWrite: in std_logic;
 		MemRead: in std_logic;
-		address: in std_logic_vector(31 downto 0);
-		writeData: in std_logic_vector(31 downto 0);
-		readData: out std_logic_vector(31 downto 0)
+		address: in std_logic_vector(15 downto 0);
+		writeData: in std_logic_vector(15 downto 0);
+		readData: out std_logic_vector(15 downto 0)
 	);
 	end component;
 	
 	component Reg
-		generic (n: natural:= 31);
+		generic (n: natural:= 15);
 		port (
 			data: in std_logic_vector(n downto 0);
 			clk: in std_logic;
@@ -113,22 +113,22 @@ architecture behavior of multiciclo is
 		);
 	end component;
 	
-	component instructionRegister
+	component Instruction_Register
 		port (
-			IRWrite: in  std_logic;
-			instrucInput: in  std_logic_vector(31 downto 0);
-			opCode: out std_logic_vector(5 downto 0);
-			regRs: out std_logic_vector(4 downto 0);
-			regRt: out std_logic_vector(4 downto 0);
-			regRd: out std_logic_vector(4 downto 0);
-			imm: out std_logic_vector(15 downto 0);
-			jumpAddr: out std_logic_vector(25 downto 0);
-			funcCode: out std_logic_vector(5 downto 0)
+			IRWrite     : in  std_logic;
+         instrucInput : in  std_logic_vector(15 downto 0); 
+			opCode      : out std_logic_vector(3 downto 0);
+         regRs	    : out std_logic_vector(2 downto 0);
+		   regRt   	: out std_logic_vector(2 downto 0);
+		   regRd   	: out std_logic_vector(2 downto 0); 
+			imm         : out std_logic_vector(5 downto 0);
+		   jumpAddr    : out std_logic_vector(11 downto 0);
+		   funcCode    : out std_logic_vector(2 downto 0)
       );
 	end component;
 	
 	component mux
-		generic (n: natural:= 31);
+		generic (n: natural:= 15);
 		port (
 			a, b: in std_logic_vector (n downto 0);
 			s: std_logic;
@@ -137,7 +137,7 @@ architecture behavior of multiciclo is
 	end component;
 	
 	component mux_4_to_1
-		generic (n: natural:= 31);
+		generic (n: natural:= 15);
 		port(
 			A,B,C,D : in std_logic_vector (n downto 0);
 			S: in std_logic_vector(1 downto 0);
@@ -150,7 +150,7 @@ architecture behavior of multiciclo is
 	process(CLK, RESET)
 		begin 
 			if(RESET = '1') then
-				pc_current <= "00000000000000000000000000000000";
+				pc_current <= "0000000000000000";
 			elsif(CLK'event and CLK='1') then
 				if ( (zero='1' and Branch='1') or PCWrite='1') then
 					pc_current <= pc_next;
@@ -158,7 +158,7 @@ architecture behavior of multiciclo is
 			end if;
 	end process;
 	
-	MUXPC: mux generic map(31) port map(
+	MUXPC: mux generic map(15) port map(
 		a => pc_current,
 		b => alu_out,
 		c => address,
@@ -179,7 +179,7 @@ architecture behavior of multiciclo is
 		q => mdr
 	);
 	
-	IR: instructionRegister port map(
+	IR: Instruction_Register port map(
 		IRWrite => IRWrite,
 		instrucInput => data,
 		opCode => opcode,
@@ -210,14 +210,14 @@ architecture behavior of multiciclo is
 		ALUSrcB => ALUSrcB
 	);
 	
-	MUXREG: mux generic map(4) port map(
+	MUXREG: mux generic map(2) port map(
 		a => RT,
 		b => RD,
 		s => RegDst, 
 		c => writeRegister
 	);
 	
-	MUXREGDATA: mux generic map(31) port map(
+	MUXREGDATA: mux generic map(15) port map(
 		a => alu_out,
 		b => mdr,
 		s => MemToReg,
@@ -252,21 +252,21 @@ architecture behavior of multiciclo is
 		b => imm_extend
 	);
 	
-	SHIFT1: shift_2 port map(
+	SHIFT1: shift port map(
 		a => imm_extend,
 		b => imm_extend_left
 	);
 	
-	MUXALUA: mux generic map(31) port map(
+	MUXALUA: mux generic map(15) port map(
 		a => pc_current,
 		b => A,
 		s => ALUSrcA,
 		c => A1 -- ALU IN
 	);
 	
-	MUXALUB: mux_4_to_1 generic map(31) port map(
+	MUXALUB: mux_4_to_1 generic map(15) port map(
 		A => B,
-		B => "00000000000000000000000000000100",
+		B => "0000000000000000",
 		C => imm_extend,
 		D => imm_extend_left,
 		S => ALUSrcB,
@@ -298,14 +298,15 @@ architecture behavior of multiciclo is
 		a => after_address,
 		b => jump_signal
 	);
+
+	--address_jump <= pc_current(15 downto 28) & jump_signal;
+	address_jump <= pc_current(12 downto 11) & jump_signal;
 	
-	address_jump <= pc_current(31 downto 28) & jump_signal;
-	
-	MUXNEXTPC: mux_4_to_1 generic map(31) port map(
+	MUXNEXTPC: mux_4_to_1 generic map(15) port map(
 		A => result,
 		B => alu_out,
 		C => address_jump,
-		D => "00000000000000000000000000000000",
+		D => "0000000000000000",
 		S => PCSrc,
 		Z => pc_next
 	);

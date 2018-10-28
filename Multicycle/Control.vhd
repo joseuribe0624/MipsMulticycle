@@ -3,19 +3,18 @@ use ieee.std_logic_1164.all;
 
 entity Control is
 	port(
-		opcode: in std_logic_vector (5 downto 0);
+		opcode: in std_logic_vector (3 downto 0);
 		clk, reset: in std_logic;
 		Branch, PCWrite, IorD, MemRead, MemWrite, MemtoReg, IRWrite, ALUSrcA, RegWrite, RegDst: out std_logic;
 		PCSrc, ALUOp, ALUSrcB: out std_logic_vector (1 downto 0)
 	);
 end Control;
 
--- (En muchos estados, no se si AluSrcA u MemtoReg sí deberian ser 1, creo que no importan)
--- LW: 100011 <<< (enrealidad es JUMP)
--- SW: 101011 << (otra vez JUMP)
--- R: 000000 << (ok, hubo que cambiar valores de regdst y memtoReg)
--- BEQ: 000100 << (ok, hubo que cambiar los valores de PCsrc (10 => 01) y AluOp (00 => 01))
--- J: 000010 << (ok, no hubo que cambiar nada)
+-- LW: 1010
+-- SW: 1011
+-- R: 0000
+-- BEQ: 0100
+-- J: 0010
 
 architecture behavior of Control is
 	signal state: std_logic_vector (5 downto 0);
@@ -32,7 +31,7 @@ architecture behavior of Control is
 
 		process (opcode, state)
 			begin
-				if (state = "000000") then
+				if (state = "0000") then
 					IorD <= '0';
 					MemRead <= '1';
 					ALUSrcA <= '0';
@@ -53,9 +52,9 @@ architecture behavior of Control is
 					ALUSrcB <= "11";
 					ALUOp <= "00";
 					case opcode is 
-						when "100011"|"101011" => next_state <= "000010";
-						when "000000" => next_state <= "000110";
-						when "000100" => next_state <= "000100";
+						when "1010"|"1011" => next_state <= "000010";
+						when "0000" => next_state <= "000110";
+						when "0100" => next_state <= "000100";
 						when others => next_state <= "001001";
 					end case;
 					IRWrite <= '0';
@@ -68,12 +67,12 @@ architecture behavior of Control is
 					IorD <= 'X';
 					PCSrc <= "00";
 					MemtoReg <= 'X';
-				elsif (state = "000010") then
+				elsif (state = "0010") then
 					ALUSrcA <= '1';
 					ALUSrcB <= "10";
 					ALUOp <= "00";
 					case opcode is
-						when "100011"  => next_state <= "000011";
+						when "1010"  => next_state <= "000011";
 						when others => next_state <= "000101";
 					end case;
 					--
