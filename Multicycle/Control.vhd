@@ -52,7 +52,7 @@ architecture behavior of Control is
 					ALUSrcA <= '0';
 					ALUSrcB <= "11";
 					ALUOp <= "00";
-					case opcode is 
+					case opcode is
 						when "100011"|"101011" => next_state <= "000010";
 						when "000000" => next_state <= "000110";
 						when "000100" => next_state <= "000100";
@@ -90,7 +90,7 @@ architecture behavior of Control is
 				elsif (state = "000110") then
 					ALUSrcA <= '1';
 					ALUSrcB <= "00";
-					ALUOp <= "10"; 
+					ALUOp <= "10";
 					next_state <= "000111";
 					--
 					IRWrite <= '0';
@@ -120,8 +120,8 @@ architecture behavior of Control is
 					IorD <= 'X';
 					MemtoReg <= 'X';
 				elsif (state = "001001") then
-					PCSrc <= "01";
-					ALUOp <= "01";
+					PCSrc <= "10";
+					ALUOp <= "00";
 					PCWrite <= '1';
 					next_state <= "000000";
 					--
