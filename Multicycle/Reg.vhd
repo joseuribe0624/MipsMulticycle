@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_unsigned.all;
 
 entity Reg is
-	 generic (n: natural:= 31);
+	 generic (n: natural:= 15);
     port (
 		data:in std_logic_vector(n downto 0);
 		clk: in std_logic;
