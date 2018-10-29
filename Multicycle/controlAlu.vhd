@@ -16,4 +16,3 @@ architecture behavioral of controlAlu is
     alu_operation(1) <= ( not(ALUOp(1)) or not(functions(2)));
     alu_operation(0) <= (( ALUOp(1) )and( functions(0)));
 end behavioral;
-
