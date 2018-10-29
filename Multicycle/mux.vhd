@@ -5,8 +5,8 @@ entity mux is
 	generic (n: natural:= 15);
 	port(
 		a, b: in std_logic_vector (n downto 0);
-		s: in std_logic;
-		c: out std_logic_vector(n downto 0)
+		s: 		in std_logic;
+		c: 		out std_logic_vector(n downto 0)
 	);
 end mux;
 

@@ -4,7 +4,7 @@ use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 entity MDR is  -- Memory Data Register
-    port( 
+    port(
 		din  : in  STD_LOGIC_VECTOR (31 downto 0);
 		dout : out STD_LOGIC_VECTOR (31 downto 0)
 		);

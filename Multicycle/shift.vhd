@@ -14,5 +14,5 @@ architecture beh of shift is
 
 	begin
 	temp <= std_logic_vector(resize(unsigned(a), 16));
-	b <= std_logic_vector(shift_left(signed(temp), 2));
+	b <= std_logic_vector(shift_left(signed(temp), 1)); -- En 16 bits multiplicamos por 2
 end beh;
