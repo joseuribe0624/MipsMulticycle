@@ -25,7 +25,7 @@ end Control;
 
 -- (OPCODES)
 -- TIPO R	: 0000
---				(campo function)
+--				(campo function) -- Podriamos cambiarlos para que funcionen con Alucontrol y la Alu
 -- 			ADD		: 000
 -- 			SUB		: 001 (por si acaso)
 -- 			AND		: 010 (por si acaso)

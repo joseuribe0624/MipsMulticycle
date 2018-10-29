@@ -11,5 +11,5 @@ end sign_extend;
 
 architecture behavior of sign_extend is
 	begin
-	b <= std_logic_vector(resize(signed(a), b'length));
+	b <= std_logic_vector(resize(signed(a), b'length)); -- Tiene que ser obligatoriamente signed(a)?
 end behavior;
