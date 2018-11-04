@@ -72,10 +72,10 @@ architecture behavior of multiciclo is
 	end component;
 
 
-	component shift_jump is
-	port (
-		a: in std_logic_vector(11 downto 0);
-		b: out std_logic_vector(13 downto 0)
+	component sign_extend_jump is
+	port(
+		a : in std_logic_vector( 11 downto 0 );
+		b: out std_logic_vector ( 15  downto 0 )
 	);
 	end component;
 
@@ -252,11 +252,6 @@ architecture behavior of multiciclo is
 		b => imm_extend
 	);
 
-	SHIFT1: shift port map(
-		a => imm_extend,
-		b => imm_extend_left
-	);
-
 	MUXALUA: mux generic map(15) port map(
 		a => pc_current,
 		b => A,
@@ -266,9 +261,9 @@ architecture behavior of multiciclo is
 
 	MUXALUB: mux_4_to_1 generic map(15) port map(
 		A => B,
-		B => "0000000000000010", -- Ya no sumamos 4 sino 2.
+		B => "0000000000000001", -- Ya no sumamos 4 sino 2.
 		C => imm_extend,
-		D => imm_extend_left,
+		D => imm_extend,
 		S => ALUSrcB,
 		Z => B1 -- ALU IN
 	);
@@ -294,13 +289,10 @@ architecture behavior of multiciclo is
 		alu_operation => alu_operation
 	);
 
-	SHIFT_JUMP_INS: shift_jump port map(
+	EXTEND2: sign_extend_jump port map(
 		a => after_address,
-		b => jump_signal
+		b => address_jump
 	);
-
-	--address_jump <= pc_current(15 downto 28) & jump_signal;
-	address_jump <= pc_current(12 downto 11) & jump_signal;
 
 	MUXNEXTPC: mux_4_to_1 generic map(15) port map(
 		A => result,
