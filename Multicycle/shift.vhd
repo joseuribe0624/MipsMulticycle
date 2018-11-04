@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity shift is
-	port (
+	port(
 		a: in std_logic_vector(15 downto 0);
 		b: out std_logic_vector(15 downto 0)
 	);
