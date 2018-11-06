@@ -16,7 +16,7 @@ end RegisterFile;
 
 architecture behavior of RegisterFile is
 	type reg_type is array (integer range<>) of std_logic_vector (31 downto 0);
-	-- llena la matriz de 0
+	-- llena la matriz de 0. Esto siempre pasa? los datos en cada registro no se corrompen con el tiempo?
 	signal reg_mem: 	reg_type(0 to 31); -- En 32 bits tenemos 32 registros.
 	signal data_out1: std_logic_vector(31 downto 0);
 	signal data_out2: std_logic_vector(31 downto 0);
