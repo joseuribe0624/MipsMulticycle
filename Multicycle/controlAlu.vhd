@@ -12,9 +12,6 @@ end controlAlu;
 
 architecture behavioral of controlAlu is
 	begin
-		-- Hay que revisar esto y todo el componente de la ALU también.
-		-- Solo tenemos 4 operaciones tipo R (add, sub, etc)
-		-- pero no estoy seguro si esto sigue sirviendo.
 	 alu_operation(2) <= ( ALUOp(0) or (ALUOp(1) and functions(1)) );
    alu_operation(1) <= ( not(ALUOp(1)) or not(functions(2)) );
    alu_operation(0) <= ( ALUOp(1) and functions(0));

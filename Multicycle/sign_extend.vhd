@@ -4,12 +4,12 @@ use IEEE.numeric_std.all;
 
 entity sign_extend is
 	port (
-		a: in std_logic_vector(5 downto 0);
-		b: out std_logic_vector(15 downto 0)
+		a: in std_logic_vector(15 downto 0);
+		b: out std_logic_vector(31 downto 0)
 	);
 end sign_extend;
 
 architecture behavior of sign_extend is
 	begin
-	b <= std_logic_vector(resize(signed(a), b'length)); -- Tiene que ser obligatoriamente signed(a)?
+	b <= std_logic_vector(resize(signed(a), b'length));
 end behavior;

@@ -7,16 +7,16 @@ entity Memory is
   port(
     MemWrite:   in std_logic;
     MemRead:    in std_logic;
-    address:    in std_logic_vector(15 downto 0);
-    writeData:  in std_logic_vector(15 downto 0);
-    readData:   out std_logic_vector(15 downto 0)
+    address:    in std_logic_vector(31 downto 0);
+    writeData:  in std_logic_vector(31 downto 0);
+    readData:   out std_logic_vector(31 downto 0)
   );
 end Memory;
 
 architecture behavior of Memory is
-	type data_ram is array (integer range<>) of std_logic_vector (15 downto 0);
-  signal ram:       data_ram(0 to 15); -- Cuantas posiciones tenemos disponibles en memoria?
-	signal data_out1: std_logic_vector (15 downto 0);
+	type data_ram is array (integer range<>) of std_logic_vector (31 downto 0);
+  signal ram:       data_ram(0 to 1023); -- 2^10 posiciones de memoria. Podriamos necesitar más después.
+	signal data_out1: std_logic_vector (31 downto 0);
 
 	begin
 		readData <= data_out1;

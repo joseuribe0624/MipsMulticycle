@@ -150,7 +150,8 @@ architecture behavior of multiciclo is
 	process(CLK, RESET)
 		begin
 			if(RESET = '1') then
-				pc_current <= "0000000000000000";
+				-- La primera dirección que lee el PC tiene que estar más adelante.
+				pc_current <= "00000000000000000000000000000000";
 			elsif(CLK'event and CLK='1') then
 				if ( (zero='1' and Branch='1') or PCWrite='1') then
 					pc_current <= pc_next;
