@@ -13,8 +13,10 @@ use ieee.std_logic_unsigned.all;
 entity bcd_decoder is
   port (
   -- En el main le conectamos a este decoder los bits (15 downto 0) de la salida de un registro
-    bcd_num       : in std_logic_vector(15 downto 0); -- Numero en bcd
-    seven_seg_num : out std_logic_vector(15 downto 0) -- Numero de dos dígitos
+    -- Numero en bcd
+	 bcd_num       : in std_logic_vector(5 downto 0); 
+	 -- Numero de dos dígitos, 14 bits porque no contamos el punto en el display
+    seven_seg_num : out std_logic_vector(13 downto 0) 
   );
 end entity;
 
@@ -22,26 +24,19 @@ architecture arch of bcd_decoder is
   -- La idea basica es hacer puros if statements o cases
   -- de tal forma que por cada numero de 16 bits dado en bcd,
   -- saquemos dos digitos codificados en 7 segmentos (los full 16 bits).
-  -- obvio tengo que probar ésto bien, pero es fácil. Aunque un poquito machetero.
-  signal bcd_output_0 : std_logic_vector (15 downto 0);
 begin
-  seven_seg_num <= bcd_output_0;
-
   process ( bcd_num ) begin
-    if ( bcd_num = "000000000000000" ) then
-      bcd_output_0 <= "1111110011111100"; -- El digito '0' copiado dos veces para que lo muestre el led
-      -- Lo mismo de arriba pero al revés, por si acaso.
-      -- bcd_output_0 <= "01111110111111";
-    elsif ( bcd_num = "000000000000001" ) then
-      bcd_output_0 <= "0000110011111100"; -- Muestre '1' y '0' en los leds.
-      -- Lo mismo de arriba pero con los numeros cambiados de orden, por si acaso.
-      -- bcd_output_0 <= "1111110000001100";
-    else
-      bcd_output_0 <= "1011110010111100"; -- Sino pasa nada de lo de arriba, que muestre "GG"
-    end if;
-
-    -- Recuerda que al final de cada byte, es siempre un 0,
-    -- porque esa señal corresponde a la del punto en
-    -- el display de 7 segmentos. Solo para tenerlo en cuenta.
-
+	case bcd_num is
+    when "000000" => seven_seg_num <= not "11111101111110"; -- 00
+    when "000001" => seven_seg_num <= not "11111100000110"; -- 01
+	 when "000010" => seven_seg_num <= not "11111101101101"; -- 02
+	 when "000011" => seven_seg_num <= not "11111101111001"; -- 03
+	 when "000100" => seven_seg_num <= not "11111100110011"; -- 04
+	 when "000101" => seven_seg_num <= not "11111101011011"; -- 05
+	 when "000110" => seven_seg_num <= not "11111101011111"; -- 06
+	 when "000111" => seven_seg_num <= not "11111101110000"; -- 07
+	 -- Añadir hasta el digito "59"
+    when others   => seven_seg_num <= not "10111101011110"; -- Sino pasa nada de lo de arriba, que muestre "GG"
+   end case;
+  end process;
 end architecture;
