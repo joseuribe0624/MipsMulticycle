@@ -13,6 +13,5 @@ end mux_4_to_1;
 architecture arch of mux_4_to_1 is
   begin
     Z <= 	A when (S = "00") else
-        	B when (S = "01") else
-        	C when (S = "10");
+        	B when (S = "01") else C;
 end arch;
