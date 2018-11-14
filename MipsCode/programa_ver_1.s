@@ -1,6 +1,5 @@
-# Esta es nuestra propia codificación para mostrar caracteres en los leds:
-# 60:A, 61:C, 62:E, 63:G, 64:h, 65:L, 66:N, 67:o, 68:P, 69:r, 70:S, 71:t, 72:X
+# Codigos para mostrar los estados (se carga la constante en el registro de estados):
+# 1: HOLA, 2: SELC, 3:OPER, 4:NEXT, 5:SET0, 6:SET1
     .text
 main:
-    # Mostrar hola
-    
+    # Mostramors HOLA
