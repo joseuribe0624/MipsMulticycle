@@ -86,7 +86,7 @@ architecture behavior of Control is
 					next_state <= "0011"; -- addi | lw | sw ) then
 
 				elsif ( opcode = "000100" ) then
-					next_state <= "000101"; -- beq
+					next_state <= "0101"; -- beq
 
 				elsif ( opcode = "000101" ) then
 					next_state <= "0110"; -- jump
