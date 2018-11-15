@@ -12,7 +12,7 @@ entity kb_register is
 end kb_register;
 
 architecture arch of kb_register is
-  signal kb_out_0 : std_logic_vector(31 downto 0);
+  signal kb_out_0 : std_logic_vector(31 downto 0)
 begin
   kb_output <= kb_out_0;
   process ( kb_input, kb_read ) begin

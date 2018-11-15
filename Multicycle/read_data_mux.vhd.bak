@@ -12,7 +12,7 @@ entity read_data_mux is -- Selecciona datos a leer entre la memoria y el teclado
 end entity;
 
 architecture arch of read_data_mux is
-  signal output_mux : std_logic_vector(31 downto 0);
+  signal output_mux
 begin
   out_mux    <= output_mux;
   output_mux <= mem_data when (sel = '0') else kb_data;
