@@ -1,0 +1,27 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.std_logic_unsigned.all;
+
+entity seven_seg_reg is
+	port (
+		data:		in std_logic_vector (31 downto 0);
+		clk: 		in std_logic;
+		w_en:		in std_logic;
+		q: 		out std_logic_vector (13 downto 0)
+	);
+end entity;
+
+architecture behavior of seven_seg_reg is
+begin
+	process ( , )
+		begin
+			data_out1 <= reg_mem(to_integer(unsigned(registerRead1)));
+			data_out2 <= reg_mem(to_integer(unsigned(registerRead2)));
+	end process;
+
+    process (clk) begin
+	    if (rising_edge(clk)) then
+		    q <= data;
+		end if;
+	end process;
+end architecture;
