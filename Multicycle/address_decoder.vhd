@@ -1,3 +1,6 @@
+-- TODO: Creo que si ponemos todas las signals en 0 antes de entrar a los if's
+-- podriamos ahorrarnos tener que poner los 0's de cada una. Pero tengo que probarlo.
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
