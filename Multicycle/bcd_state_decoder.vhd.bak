@@ -24,14 +24,14 @@ begin
   state <= output_0;
   process ( bcd_num ) begin
     case bcd_num is
-      when "000"  => output_0 <= not ("0000001"); -- dashline ('-')
-      when "001"  => output_0 <= not ("0110111"); -- H
-      when "010"  => output_0 <= not ("1001110"); -- C
-      when "011"  => output_0 <= not ("0011101"); -- o
-      when "011"  => output_0 <= not ("0010101"); -- n
-      when "011"  => output_0 <= not ("1111110"); -- 0
-      when "011"  => output_0 <= not ("0000110"); -- 1
-      when others => output_0 <= not ("1011110"); -- G
+      when "000"  => output_0 <= not ("0000001") -- dashline ('-')
+      when "001"  => output_0 <= not ("0110111") -- H
+      when "010"  => output_0 <= not ("1001110") -- C
+      when "011"  => output_0 <= not ("0011101") -- o
+      when "011"  => output_0 <= not ("0010101") -- n
+      when "011"  => output_0 <= not ("1111110") -- 0
+      when "011"  => output_0 <= not ("0000110") -- 1
+      when others => output_0 <= not ("1011110") -- G
     end case;
   end process;
 end architecture;
