@@ -18,8 +18,7 @@ architecture behavior of Memory is
    --signal ram: data_ram(0 to 1023); -- 2^10 posiciones de memoria. Podriamos necesitar más después.
 	signal ram : MEM(0 to 13) := (
 		0 => "00000000001000100001100000000000", -- add r1 r2 r3  (r3 <= r1 (4) + r2 (-1))
-		--0 => std_logic_vector(to_signed(-1, 32)),
-		1 => std_logic_vector(to_signed(5, 32)),
+		1 => "00010100000000000000000000000110", -- jump 6         (pc <= 6)
 		2 => std_logic_vector(to_signed(42, 32)),
 		3 => "00000100000000010000000000000101", -- addi r0 r1 5  (r1 <= r0 + 5)
 		4 => "00000100001000100000000000010100", -- addi r1 r2 20 (r2 <= r1 + 20)
@@ -27,7 +26,6 @@ architecture behavior of Memory is
 		6 => "00001100110001010000000000000001", -- sw r6 r5 1    (mem[r6 + 1] <= r5)
 		7 => "00010001010010110000000000000100", -- beq r10 r11 4 (if r10 == r11 then pc <= 4)
 		8 => "00010000000000010000000000000011", -- beq r0 r1 3   (if r0 == r1 then pc <= 3)
-	  9 => "00010100000000000000000000000110", -- jump 6         (pc <= 6)
 		others => (others => '0')
 	);
 	signal data_out1: std_logic_vector (31 downto 0);
