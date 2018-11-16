@@ -5,7 +5,7 @@ use ieee.std_logic_unsigned.all;
 entity bcd_decoder is
   port (
 	 bcd_num       : in  std_logic_vector(5  downto 0);
-    seven_seg_num : out std_logic_vector(13 downto 0)
+   seven_seg_num : out std_logic_vector(13 downto 0)
   );
 end entity;
 

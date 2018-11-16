@@ -28,9 +28,9 @@ begin
       when "001"  => output_0 <= not ("0110111"); -- H
       when "010"  => output_0 <= not ("1001110"); -- C
       when "011"  => output_0 <= not ("0011101"); -- o
-      when "011"  => output_0 <= not ("0010101"); -- n
-      when "011"  => output_0 <= not ("1111110"); -- 0
-      when "011"  => output_0 <= not ("0000110"); -- 1
+      when "100"  => output_0 <= not ("0010101"); -- n
+      when "101"  => output_0 <= not ("1111110"); -- 0
+      when "110"  => output_0 <= not ("0000110"); -- 1
       when others => output_0 <= not ("1011110"); -- G
     end case;
   end process;

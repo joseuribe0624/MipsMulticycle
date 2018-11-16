@@ -3,15 +3,15 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use ieee.std_logic_unsigned.all;
 
-entity kb_register is
+entity keyboard_register is
   port(
     kb_read   : in  std_logic;
     kb_input  : in  std_logic_vector(3 downto 0);
     kb_output : out std_logic_vector(31 downto 0)
   );
-end kb_register;
+end keyboard_register;
 
-architecture arch of kb_register is
+architecture arch of keyboard_register is
   signal kb_out_0 : std_logic_vector(31 downto 0);
 begin
   kb_output <= kb_out_0;
