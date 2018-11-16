@@ -4,7 +4,10 @@ use ieee.std_logic_unsigned.all;
 
 entity multiciclo is
 	port(
-		CLK, RESET: in std_logic
+		CLK, RESET: in std_logic;
+		keyboard_input: in std_logic_vector (3 downto 0);
+		decode_0, decode_1, decode_2, decode_3, decode_4: out std_logic_vector(13 downto 0);
+		decode_5: out std_logic_vector(6 downto 0)
 	);
 end multiciclo;
 
@@ -36,7 +39,49 @@ architecture behavior of multiciclo is
 	signal alu_operation: std_logic_vector(2 downto 0);
 	-- Data
 	signal jump_signal: std_logic_vector(13 downto 0);
+	-- Decoder
+	signal re_kb, we_MEM, re_MEM, rd_sel, we_0, we_1_0, we_1_1, we_2, we_3,
+	we_4, we_5_0, we_5_1, we_6: std_logic;
+	signal kb_output, data_mdr: std_logic_vector(31 downto 0);
+	signal bcd_0, bcd_1, bcd_2, bcd_3, bcd_4: std_logic_vector(5 downto 0);
+	signal bcd_state_5:  std_logic_vector(2 downto 0);
 
+	component address_decoder port(
+		address: in std_logic_vector (31 downto 0);
+		mem_write, mem_read  : in std_logic;
+		w_en_reg_0, w_en_reg_1_0, w_en_reg_1_1, w_en_reg_2, w_en_reg_3, w_en_reg_4, w_en_reg_5_0,
+		w_en_reg_5_1, w_en_reg_6, r_en_mem, r_en_kb, w_en_mem, rdsel: out std_logic
+   );
+	end component;
+	
+	component seven_seg_reg is
+		generic (n: natural := 31; t: natural := 5);
+		port (
+			data:	in std_logic_vector (n downto 0);
+			w_en:	in std_logic;
+			data_out: out std_logic_vector (t downto 0)
+		);
+	end component;
+	
+	component keyboard_register port(
+		kb_read: in  std_logic;
+		kb_input: in  std_logic_vector(3 downto 0);
+		kb_output: out std_logic_vector(31 downto 0)
+	);
+	end component;
+	
+	component bcd_state_decoder port (
+		bcd_num : in std_logic_vector(2 downto 0);
+		state   : out std_logic_vector(6 downto 0)
+	);
+	end component;
+	
+	component bcd_decoder port (
+		bcd_num       : in  std_logic_vector(5  downto 0);
+		seven_seg_num : out std_logic_vector(13 downto 0)
+	);
+	end component;
+	
 	component Control port(
 		opcode: in std_logic_vector (5 downto 0);
 		clk, reset: in std_logic;
@@ -86,7 +131,6 @@ architecture behavior of multiciclo is
 	);
 	end component;
 
-	---identica
 	component alu port (
 		A, B : in std_logic_vector (31 downto 0);
 		alu_control : in std_logic_vector (2 downto 0);
@@ -166,17 +210,119 @@ architecture behavior of multiciclo is
 		s => IorD
 	);
 
+	DECODER: address_decoder port map (
+		address => alu_out,
+		mem_write => MemWrite,
+		mem_read => MemRead,
+
+		w_en_reg_0 => we_0,
+		w_en_reg_1_0 => we_1_0,
+		w_en_reg_1_1 => we_1_1,
+		w_en_reg_2 => we_2,
+		w_en_reg_3 => we_3,
+
+		w_en_reg_4 => we_4,
+		w_en_reg_5_0 => we_5_0,
+		w_en_reg_5_1 => we_5_1,
+		w_en_reg_6 => we_6,
+
+		r_en_mem => re_MEM,
+		r_en_kb => re_kb,
+		w_en_mem => we_MEM,
+		rdsel => rd_sel
+	);
+	
+	REG0: seven_seg_reg generic map(31, 5) port map(
+		data => B,
+		w_en => we_0,
+		data_out => bcd_0
+	);
+	
+	REG1: seven_seg_reg generic map(31, 5) port map(
+		data => B,
+		w_en => we_1_0,
+		data_out => bcd_1
+	);
+	
+	REG2: seven_seg_reg generic map(31, 5) port map(
+		data => B,
+		w_en => we_2,
+		data_out => bcd_2
+	);
+	
+	REG3: seven_seg_reg generic map(31, 5) port map(
+		data => B,
+		w_en => we_3,
+		data_out => bcd_3
+	);
+	
+	REG4: seven_seg_reg generic map(31, 5) port map(
+		data => B,
+		w_en => we_4,
+		data_out => bcd_4
+	);
+	
+	REG5: seven_seg_reg generic map(31, 2) port map(
+		data => B,
+		w_en => we_5_0,
+		data_out => bcd_state_5
+	);
+	
+	BCD0: bcd_decoder port map (
+		bcd_num => bcd_0,
+		seven_seg_num => decode_0
+	);
+	
+	BCD1: bcd_decoder port map (
+		bcd_num => bcd_1,
+		seven_seg_num => decode_1
+	);
+	
+	BCD2: bcd_decoder port map (
+		bcd_num => bcd_2,
+		seven_seg_num => decode_2
+	);
+	
+	BCD3: bcd_decoder port map (
+		bcd_num => bcd_3,
+		seven_seg_num => decode_3
+	);
+	
+	BCD4: bcd_decoder port map (
+		bcd_num => bcd_4,
+		seven_seg_num => decode_4
+	);
+	
+	BCD5: bcd_state_decoder port map (
+		bcd_num => bcd_state_5,
+		state => decode_5
+	);
+
+	KEYBOARD: keyboard_register port map(
+		kb_read => re_kb,
+		kb_input => keyboard_input,
+		kb_output => kb_output
+	);
+	
 	RAM:  Memory port map (
-		MemWrite => MemWrite,
-		MemRead => MemRead,
+		MemWrite => we_MEM,
+		MemRead => re_MEM,
 		address => address,
 		writeData => B,
 		readData => data
 	);
+	
+	-- Mux
+	MUXMDR: mux generic map(31) port map(
+		a => data,
+		b => kb_output,
+		s => rd_sel,
+		c => data_mdr
+	);
 
 	RegMemData: Reg port map(
 		clk => CLK,
-		data => data,
+		data => data_mdr,
 		q => mdr
 	);
 
