@@ -32,12 +32,12 @@ end Control;
 -- TIPO R	: 000000
 --				(campo function)
 -- 			ADD		: 000
--- 			SUB		: 001 (por si acaso)
--- 			AND		: 010 (por si acaso)
--- 			OR		: 011 (por si acaso)
---      SLT   : 100 (esto sí lo necesitamos)
+-- 			SUB		: 001
+-- 			AND		: 010
+-- 			OR		   : 011
+--          SLT      : 100
 --
--- ADDI 	: 000001
+-- ADDI 	   : 000001
 -- LW 		: 000010
 -- SW 		: 000011
 --

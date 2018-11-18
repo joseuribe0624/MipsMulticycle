@@ -5,13 +5,11 @@ use ieee.std_logic_unsigned.all;
 entity multiciclo is
 	port(
 		CLK, RESET          : in std_logic;
-		keyboard_input      : in std_logic_vector (3 downto 0);
+		keyboard_input      : in std_logic_vector (31 downto 0);
 		
 		decode_0, decode_1,
 		decode_2, decode_3,
-		decode_4            : out std_logic_vector(13 downto 0);
-		
-		decode_5            : out std_logic_vector(6 downto 0)
+		decode_4, decode_5  : out std_logic_vector(31 downto 0)		
 	);
 end multiciclo;
 
@@ -27,7 +25,12 @@ architecture behavior of multiciclo is
 	
 	-- Decode
 	signal writeRegister         : std_logic_vector (4 downto 0);
-	signal Branch, PCWrite, IorD, MemRead, MemWrite, MemtoReg, IRWrite, ALUSrcA, RegWrite, RegDst: std_logic;
+	
+	signal Branch, PCWrite, IorD, 
+	MemRead, MemWrite, MemtoReg, 
+	IRWrite, ALUSrcA, RegWrite, 
+	RegDst                       : std_logic;
+	
 	signal PCSrc, ALUOp, ALUSrcB : std_logic_vector (1 downto 0);
 	signal opcode                : std_logic_vector (5 downto 0);
 	--signal next_state            : std_logic_vector (3 downto 0);
@@ -36,7 +39,8 @@ architecture behavior of multiciclo is
 
 	-- Register, ALU
 	signal registerWriteData : std_logic_vector(31 downto 0);
-	signal data_A, data_B, A, A1, B, B1, result : std_logic_vector(31 downto 0);
+	signal data_A, data_B, 
+	A, A1, B, B1, result     : std_logic_vector(31 downto 0);
 	signal zero              : std_logic;
 	signal alu_operation     : std_logic_vector(2 downto 0);
 	-- Data
@@ -47,8 +51,7 @@ architecture behavior of multiciclo is
 	we_4, we_5                   : std_logic;
 	signal kb_output, data_mdr   : std_logic_vector(31 downto 0);
 	signal bcd_0, bcd_1, bcd_2, 
-	bcd_3, bcd_4                 : std_logic_vector(5 downto 0);
-	signal bcd_state_5           : std_logic_vector(2 downto 0);
+	bcd_3, bcd_4, bcd_state_5    : std_logic_vector(31 downto 0);
 
 	component address_decoder port(
 		address                 : in std_logic_vector (31 downto 0);
@@ -62,30 +65,30 @@ architecture behavior of multiciclo is
 	end component;
 	
 	component seven_seg_reg is
-		generic (n: natural := 31; t: natural := 5);
+		generic (n: natural := 31);
 		port (
 			data     : in std_logic_vector (n downto 0);
 			w_en     : in std_logic;
-			data_out : out std_logic_vector (t downto 0)
+			data_out : out std_logic_vector (n downto 0)
 		);
 	end component;
 	
 	component keyboard_register port(
 		kb_read   : in  std_logic;
-		kb_input  : in  std_logic_vector(3 downto 0);
+		kb_input  : in  std_logic_vector(31 downto 0);
 		kb_output : out std_logic_vector(31 downto 0)
 	);
 	end component;
 	
 	component bcd_state_decoder port (
-		bcd_num : in std_logic_vector(2 downto 0);
-		state   : out std_logic_vector(6 downto 0)
+		bcd_num : in std_logic_vector(31 downto 0);
+		state   : out std_logic_vector(31 downto 0)
 	);
 	end component;
 	
 	component bcd_decoder port (
-		bcd_num       : in  std_logic_vector(5  downto 0);
-		seven_seg_num : out std_logic_vector(13 downto 0)
+		bcd_num       : in  std_logic_vector(31  downto 0);
+		seven_seg_num : out std_logic_vector(31 downto 0)
 	);
 	end component;
 	
@@ -242,37 +245,37 @@ architecture behavior of multiciclo is
 		rdsel    => rd_sel
 	);
 	
-	REG0: seven_seg_reg generic map(31, 5) port map(
+	REG0: seven_seg_reg generic map(31) port map(
 		data     => B,
 		w_en     => we_0,
 		data_out => bcd_0
 	);
 	
-	REG1: seven_seg_reg generic map(31, 5) port map(
+	REG1: seven_seg_reg generic map(31) port map(
 		data     => B,
 		w_en     => we_1,
 		data_out => bcd_1
 	);
 	
-	REG2: seven_seg_reg generic map(31, 5) port map(
+	REG2: seven_seg_reg generic map(31) port map(
 		data     => B,
 		w_en     => we_2,
 		data_out => bcd_2
 	);
 	
-	REG3: seven_seg_reg generic map(31, 5) port map(
+	REG3: seven_seg_reg generic map(31) port map(
 		data     => B,
 		w_en     => we_3,
 		data_out => bcd_3
 	);
 	
-	REG4: seven_seg_reg generic map(31, 5) port map(
+	REG4: seven_seg_reg generic map(31) port map(
 		data     => B,
 		w_en     => we_4,
 		data_out => bcd_4
 	);
 	
-	REG5: seven_seg_reg generic map(31, 2) port map(
+	REG5: seven_seg_reg generic map(31) port map(
 		data     => B,
 		w_en     => we_5,
 		data_out => bcd_state_5

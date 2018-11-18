@@ -5,19 +5,28 @@ use ieee.std_logic_unsigned.all;
 
 entity keyboard_register is
   port(
+    clk       : in  std_logic;
     kb_read   : in  std_logic;
-    kb_input  : in  std_logic_vector(3 downto 0);
+    kb_input  : in  std_logic_vector(31 downto 0);
     kb_output : out std_logic_vector(31 downto 0)
   );
 end keyboard_register;
 
 architecture arch of keyboard_register is
   signal kb_out_0 : std_logic_vector(31 downto 0);
-begin
+  begin
   kb_output <= kb_out_0;
-  process ( kb_input, kb_read ) begin
-    if (kb_read = '1') then
-      kb_out_0 <= std_logic_vector(resize(unsigned(kb_input), kb_output'length));
-    end if;
-  end process;
+	process (clk) begin
+	    if (rising_edge(clk)) then
+		    if (kb_read = '1') then
+            kb_out_0 <= kb_input;
+          end if;
+		end if;
+	end process;
+
+--  process ( kb_input, kb_read ) begin
+--    if (kb_read = '1') then
+  --    kb_out_0 <= kb_input; --std_logic_vector(resize(unsigned(kb_input), kb_output'length));
+   -- end if;
+  --end process;
 end architecture;

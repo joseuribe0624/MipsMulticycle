@@ -7,7 +7,7 @@ entity Reg is
 	port (
 		data:		in std_logic_vector (n downto 0);
 		clk: 		in std_logic;
-		q: 			out std_logic_vector (n downto 0)
+		q: 		out std_logic_vector (n downto 0)
 	);
 end entity;
 

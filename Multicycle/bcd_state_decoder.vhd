@@ -13,29 +13,28 @@ use ieee.std_logic_unsigned.all;
 
 entity bcd_state_decoder is
   port (
-    bcd_num : in std_logic_vector(2 downto 0);  -- Numero en bcd
-    state   : out std_logic_vector(6 downto 0) -- Caracter del estado (7 señales, un solo 7-seg)
+    bcd_num : in  std_logic_vector(31 downto 0);  -- Numero en bcd
+    state   : out std_logic_vector(31 downto 0)   -- Caracter del estado (7 señales, un solo 7-seg)
   );
 end entity;
 
 architecture arch of bcd_state_decoder is
-  signal output_0 : std_logic_vector (6 downto 0);
+  signal output_0 : std_logic_vector (31 downto 0);
 begin
   state <= output_0;
   process ( bcd_num ) begin
     case bcd_num is
-      when "000"  => output_0 <= not ("0000001"); -- dashline ('-')
-      when "001"  => output_0 <= not ("0110111"); -- H
-      when "010"  => output_0 <= not ("1001110"); -- C
-      when "011"  => output_0 <= not ("0011101"); -- o
-      when "100"  => output_0 <= not ("0010101"); -- n
-      when "101"  => output_0 <= not ("1111110"); -- 0
-      when "110"  => output_0 <= not ("0000110"); -- 1
-      when others => output_0 <= not ("1011110"); -- G
+      when "00000000000000000000000000000000"  => output_0 <= not ("0000001" & "0000000000000000000000000"); -- dashline ('-')
+      when "00000000000000000000000000000001"  => output_0 <= not ("0110111" & "0000000000000000000000000"); -- H
+      when "00000000000000000000000000000010"  => output_0 <= not ("1001110" & "0000000000000000000000000"); -- C
+      when "00000000000000000000000000000011"  => output_0 <= not ("0011101" & "0000000000000000000000000"); -- o
+      when "00000000000000000000000000000100"  => output_0 <= not ("0010101" & "0000000000000000000000000"); -- n
+      when "00000000000000000000000000000101"  => output_0 <= not ("1111110" & "0000000000000000000000000"); -- 0
+      when "00000000000000000000000000000110"  => output_0 <= not ("0000110" & "0000000000000000000000000"); -- 1
+      when others                              => output_0 <= not ("1011110" & "0000000000000000000000000"); -- G
     end case;
   end process;
 end architecture;
-
 
 -- when "000"  => output_0 <= not ("0000001" & "0000001" & "0000001" & "0000001"); -- (Cuatro '-' (dashlines))
 -- when "001"  => output_0 <= not ("0110111" & "0011101" & "0110000" & "1110111"); -- HOLA
