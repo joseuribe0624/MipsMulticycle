@@ -23,7 +23,7 @@ architecture behavioral of alu is
 					    A and B when alu_control	=	"110" else
 					    A or B 	when alu_control	=	"111" else
 					    "00000000000000000000000000000001" when (alu_control = "101" and A < B) else
-					    "00000000000000000000000000000000" when alu_control = "101";
+					    "00000000000000000000000000000000";
 
 		zero <= '1' when (A = B and alu_control= "011") else
 				    '1' when A = B else
