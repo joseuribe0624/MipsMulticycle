@@ -26,13 +26,13 @@ architecture behavior of RegisterFile is
 		registerReadData1 <= data_out1;
 		registerReadData2 <= data_out2;
 
-		process ( registerRead1, registerRead2 )
+		process ( registerRead1, registerRead2, reg_mem )
 			begin
 				data_out1 <= reg_mem(to_integer(unsigned(registerRead1)));
 				data_out2 <= reg_mem(to_integer(unsigned(registerRead2)));
 		end process;
 
-		process ( registerWriteData, writeRegister )
+		process ( registerWrite, registerWriteData, writeRegister, reg_mem )
 			begin
 				if registerWrite = '1' then
 	          reg_mem(to_integer(unsigned(writeRegister))) <= registerWriteData;

@@ -35,14 +35,14 @@ architecture behavior of Memory is
 
 	begin
 		readData <= data_out1;
-		process ( address, writeData, MemWrite )
+		process ( address, writeData, MemWrite, ram )
 			begin
 				if( MemWrite='1') then
 					ram(to_integer(unsigned(address))) <= writeData;
 				end if;
 		end process;
 
-		process ( address, MemRead )
+		process ( address, MemRead, ram, data_out1 )
 			begin
 				if(MemRead='1') then
 					data_out1 <= ram(to_integer(unsigned(address)));
