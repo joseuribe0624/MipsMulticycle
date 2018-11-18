@@ -4,7 +4,7 @@ use ieee.numeric_std.all;
 
 entity tb_ALU is
 	port(
-		result: out std_logic_vector(15 downto 0);
+		result: out std_logic_vector(31 downto 0);
 		zero: out std_logic
 	);
 end tb_ALU;
@@ -18,14 +18,14 @@ architecture behavioral of tb_ALU is
 	end component;
 	
 	component alu port(
-		A, B: in std_logic_vector (15 downto 0);
+		A, B: in std_logic_vector (31 downto 0);
 		alu_control: in std_logic_vector (2 downto 0);
 		zero: out std_logic;
-		result: out std_logic_vector (15 downto 0)
+		result: out std_logic_vector (31 downto 0)
 	);
 	end component;
 	
-	signal A, B: std_logic_vector(15 downto 0);
+	signal A, B: std_logic_vector(31 downto 0);
 	signal functions, alu_operation: std_logic_vector(2 downto 0);
 	signal ALUOp: std_logic_vector(1 downto 0);
 	
@@ -46,8 +46,8 @@ architecture behavioral of tb_ALU is
 		
 		process
 			begin
-				B <= "0000000000000110";
-				A <= "0000000000000101";
+				B <= std_logic_vector(to_signed(6, 32));
+				A <= std_logic_vector(to_signed(5, 32));
 				ALUOp <= "10";
 				functions <= "000";
 				wait for 10 ns;
