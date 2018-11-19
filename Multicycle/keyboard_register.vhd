@@ -23,10 +23,4 @@ architecture arch of keyboard_register is
           end if;
 		end if;
 	end process;
-
---  process ( kb_input, kb_read ) begin
---    if (kb_read = '1') then
-  --    kb_out_0 <= kb_input; --std_logic_vector(resize(unsigned(kb_input), kb_output'length));
-   -- end if;
-  --end process;
 end architecture;

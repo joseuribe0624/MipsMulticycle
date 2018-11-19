@@ -16,9 +16,9 @@ end RegisterFile;
 
 architecture behavior of RegisterFile is
 	type reg_type is array (integer range<>) of std_logic_vector (31 downto 0);
-	signal reg_mem : reg_type(0 to 15);-- := (
-		--others => (others => '0')
-	--);
+	signal reg_mem : reg_type(0 to 15) := (
+		others => (others => '0')
+	);
 	signal data_out1: std_logic_vector(31 downto 0);
 	signal data_out2: std_logic_vector(31 downto 0);
 
