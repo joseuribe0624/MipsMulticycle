@@ -67,6 +67,7 @@ architecture behavior of multiciclo is
 	component seven_seg_reg is
 		generic (n: natural := 31);
 		port (
+		   clk      : in std_logic;
 			data     : in std_logic_vector (n downto 0);
 			w_en     : in std_logic;
 			data_out : out std_logic_vector (n downto 0)
@@ -74,6 +75,7 @@ architecture behavior of multiciclo is
 	end component;
 	
 	component keyboard_register port(
+	   clk       : in  std_logic;
 		kb_read   : in  std_logic;
 		kb_input  : in  std_logic_vector(31 downto 0);
 		kb_output : out std_logic_vector(31 downto 0)
@@ -246,36 +248,42 @@ architecture behavior of multiciclo is
 	);
 	
 	REG0: seven_seg_reg generic map(31) port map(
+	   clk      => CLK,
 		data     => B,
 		w_en     => we_0,
 		data_out => bcd_0
 	);
 	
 	REG1: seven_seg_reg generic map(31) port map(
+	   clk      => CLK,
 		data     => B,
 		w_en     => we_1,
 		data_out => bcd_1
 	);
 	
 	REG2: seven_seg_reg generic map(31) port map(
+		clk      => CLK,
 		data     => B,
 		w_en     => we_2,
 		data_out => bcd_2
 	);
 	
 	REG3: seven_seg_reg generic map(31) port map(
+		clk      => CLK,
 		data     => B,
 		w_en     => we_3,
 		data_out => bcd_3
 	);
 	
 	REG4: seven_seg_reg generic map(31) port map(
+		clk      => CLK,
 		data     => B,
 		w_en     => we_4,
 		data_out => bcd_4
 	);
 	
 	REG5: seven_seg_reg generic map(31) port map(
+		clk      => CLK,
 		data     => B,
 		w_en     => we_5,
 		data_out => bcd_state_5
@@ -312,6 +320,7 @@ architecture behavior of multiciclo is
 	);
 
 	KEYBOARD: keyboard_register port map(
+		clk       => CLK,
 		kb_read   => re_kb,
 		kb_input  => keyboard_input,
 		kb_output => kb_output

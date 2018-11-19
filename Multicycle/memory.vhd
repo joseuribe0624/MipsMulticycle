@@ -15,8 +15,7 @@ end Memory;
 
 architecture behavior of Memory is
 	type MEM is array (integer range<>) of std_logic_vector (31 downto 0);
-   --signal ram: data_ram(0 to 1023); -- 2^10 posiciones de memoria. Podriamos necesitar mÃ¡s despuÃ©s.
-	signal ram : MEM(0 to 13) := (
+	signal ram : MEM(0 to 31) := (
 		0 => "00010001010010110000000000000100", -- beq r10 r11 4 (if r10 == r11 then pc <= 4)
 		1 => "00010100000000000000000000001000", -- jump 6 (pc <= 6)
 		2 => "00000100000000010000000000000101", -- addi r0 r1 5  (r1 <= r0 + 5)
