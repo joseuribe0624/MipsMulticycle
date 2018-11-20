@@ -18,12 +18,12 @@ entity Control is
 		MemWrite,
 		MemtoReg,
 		IRWrite,
-		ALUSrcA,
 		RegWrite,
 		RegDst: 	out std_logic;
 
 		PCSrc,
 		ALUOp,
+		ALUSrcA,
 		ALUSrcB: 	out std_logic_vector (1 downto 0)
 	);
 end Control;
@@ -65,7 +65,7 @@ architecture behavior of Control is
 				--
 				IorD 			<= '0';
 				MemRead 	<= '1';
-				ALUSrcA 	<= '0';
+				ALUSrcA 	<= "00";
 				ALUSrcB 	<= "01";
 				ALUOp			<= "00";
 				PCSrc 		<= "00";
@@ -87,14 +87,18 @@ architecture behavior of Control is
 
 				elsif ( opcode = "000100" ) then
 					next_state <= "0101"; -- beq
-
 				elsif ( opcode = "000101" ) then
 					next_state <= "0110"; -- jump
 				else
 					next_state <= "0001"; -- Inicio
 				end if;
 				--
-				ALUSrcA 	<= '0';
+				if (opcode = "000100") then
+					ALUSrcA <= "10";
+				else
+					ALUSrcA 	<= "00";
+				end if;
+	
 				ALUSrcB 	<= "11";
 				ALUOp 		<= "00";
 				--
@@ -110,7 +114,7 @@ architecture behavior of Control is
 				MemtoReg 	<= 'X';
 
 		elsif ( state = "0011" ) then -- MemAddr
-				ALUSrcA 	<= '1';
+				ALUSrcA 	<= "01";
 				ALUSrcB 	<= "10";
 				ALUOp    <= "00";
 				--
@@ -141,7 +145,7 @@ architecture behavior of Control is
 		elsif ( state = "0100" ) then -- Execute
 				next_state	<= "1010";
 				--
-				ALUSrcA 	   <= '1';
+				ALUSrcA 	   <= "01";
 				ALUSrcB 	   <= "00";
 				ALUOp 		<= "10";
 				--
@@ -159,14 +163,14 @@ architecture behavior of Control is
 		elsif ( state = "0101" ) then -- Branch
 				next_state  <= "0001";
 				--
-				ALUSrcA 	  <= '1';
+				ALUSrcA 	  <= "01";
 				ALUSrcB 	  <= "00";
 				ALUOp      <= "01";
 				PCSrc      <= "01";
 				Branch     <= '1';
+				PCWrite    <= '1';
 				--
 				IRWrite    <= '0';
-				PCWrite    <= '0';
 				MemWrite   <= '0';
 				MemRead    <= '0';
 				RegWrite 	<= '0';
@@ -181,7 +185,7 @@ architecture behavior of Control is
 				ALUOp 		<= "00";
 				PCWrite 	<= '1';
 				--
-				ALUSrcA 	<= '1';
+				ALUSrcA 	<= "01";
 				ALUSrcB 	<= "00";
 				IRWrite 	<= '0';
 				MemWrite 	<= '0';
@@ -198,7 +202,7 @@ architecture behavior of Control is
 				IorD 			<= '1';
 				MemRead 	<= '1';
 				--
-				ALUSrcA 	<= '1';
+				ALUSrcA 	<= "01";
 				ALUSrcB 	<= "00";
 				ALUOp 		<= "00";
 				IRWrite 	<= '0';
@@ -216,7 +220,7 @@ architecture behavior of Control is
 				IorD 			<= '1';
 				MemWrite 	<= '1';
 				--
-				ALUSrcA 	<= '1';
+				ALUSrcA 	<= "01";
 				ALUSrcB 	<= "00";
 				ALUOp 		<= "00";
 				PCSrc 		<= "00";
@@ -235,7 +239,7 @@ architecture behavior of Control is
 				MemtoReg 	<= '0';
 				RegWrite 	<= '1';
 				--
-				ALUSrcA 	<= '1';
+				ALUSrcA 	<= "01";
 				ALUSrcB 	<= "00";
 				ALUOp 		<= "00";
 				PCSrc 		<= "00";
@@ -253,7 +257,7 @@ architecture behavior of Control is
 				MemtoReg 	<= '0';
 				RegWrite 	<= '1';
 				--
-				ALUSrcA 	<= '1';
+				ALUSrcA 	<= "01";
 				ALUSrcB 	<= "00";
 				ALUOp 		<= "00";
 				PCSrc 		<= "00";
@@ -271,7 +275,7 @@ architecture behavior of Control is
 				MemtoReg 	<= '1';
 				RegWrite 	<= '1';
 				--
-				ALUSrcA 	<= '1';
+				ALUSrcA 	<= "01";
 				ALUSrcB 	<= "00";
 				ALUOp 		<= "00";
 				PCSrc 		<= "00";
