@@ -17,7 +17,6 @@ architecture behavior of multiciclo is
 	signal pc_current, alu_out, 
 	address, mdr, data   : std_logic_vector (31 downto 0);
 	signal pc_next       : std_logic_vector (31 downto 0);
-	signal instruction   : std_logic_vector (31 downto 0);
 	signal after_address : std_logic_vector (25 downto 0);
 	signal RS, RD, RT    : std_logic_vector(4 downto 0);
 	signal funct         : std_logic_vector (2 downto 0);
@@ -214,6 +213,7 @@ architecture behavior of multiciclo is
 		begin
 			if(RESET = '1') then
 				pc_current <= "00000000000000000000000000000000";
+				
 			elsif(CLK'event and CLK='1') then
 				if ( (zero='1' and Branch='1') or PCWrite='1') then
 					pc_current <= pc_next;

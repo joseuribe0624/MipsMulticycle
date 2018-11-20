@@ -33,9 +33,7 @@ end Control;
 --				(campo function)
 -- 			ADD		: 000
 -- 			SUB		: 001
--- 			AND		: 010
--- 			OR		   : 011
---          SLT      : 100
+--          SLT      : 010
 --
 -- ADDI 	   : 000001
 -- LW 		: 000010
@@ -134,9 +132,9 @@ architecture behavior of Control is
 				MemRead 	<= '0';
 				RegWrite 	<= '0';
 				Branch 		<= '0';
+				MemtoReg 	<= '0'; -- Data hazards (se alcanza a escribir un dato de la direccion anterior en el rf usando addi)
 				RegDst 		<= 'X';
 				IorD 			<= 'X';
-				MemtoReg 	<= 'X';
 
 		elsif ( state = "0100" ) then -- Execute
 				next_state	<= "1010";
