@@ -15,10 +15,10 @@ end alu;
 architecture behavioral of alu is
 	begin
 		-- add    : 010
-		-- sub    : 001
+		-- sub    : 011
 		-- and    : 110
 		-- or     : 111
-		-- branch : 011
+		-- branch : 110
 		-- slt    : 101 => slt rs rt rd => if (rs < rt) rd = 1 else rd = 0
 		process ( A, B, alu_control ) begin
 		  result <= "00000000000000000000000000000000";
@@ -27,7 +27,7 @@ architecture behavioral of alu is
 		  if    (alu_control	= "010") then
 		    result <= A + B;
 			 
-		  elsif (alu_control	= "011") then
+		  elsif (alu_control	= "110" or alu_control = "011") then
 		    result <= A - B;
 			 
 		  elsif (alu_control	= "110") then
@@ -44,7 +44,7 @@ architecture behavioral of alu is
 			 end if;
 		  end if;
 		  
-		  if   (alu_control= "011" and A = B) then
+		  if   ((alu_control="011" or alu_control= "110") and A = B) then
 		    zero <= '1';
 		  else
           zero <= '0';

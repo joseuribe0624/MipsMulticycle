@@ -168,7 +168,7 @@ architecture behavior of Control is
 				ALUOp      <= "01";
 				PCSrc      <= "01";
 				Branch     <= '1';
-				PCWrite    <= '1';
+				PCWrite    <= '0';
 				--
 				IRWrite    <= '0';
 				MemWrite   <= '0';
