@@ -17,7 +17,7 @@ architecture behavioral of alu is
 		-- add    : 010
 		-- sub    : 011
 		-- slt    : 100 => slt rs rt rd => if (rs < rt) rd = 1 else rd = 0
-		
+
 		process ( A, B, alu_control ) begin
 		  result <= "00000000000000000000000000000000"; 
 		  zero   <= '0';
@@ -25,6 +25,7 @@ architecture behavioral of alu is
 		  if    (alu_control	= "010") then -- add
 		    result <= A + B;
 			 
+
 		  elsif (alu_control	= "011") then -- sub
 		    result <= A - B; -- El posible output negativo queda en AluOut con los branches
 			 

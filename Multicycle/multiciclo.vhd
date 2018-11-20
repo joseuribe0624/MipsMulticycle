@@ -27,10 +27,10 @@ architecture behavior of multiciclo is
 	
 	signal Branch, PCWrite, IorD, 
 	MemRead, MemWrite, MemtoReg, 
-	IRWrite, ALUSrcA, RegWrite, 
+	IRWrite, RegWrite, 
 	RegDst                       : std_logic;
 	
-	signal PCSrc, ALUOp, ALUSrcB : std_logic_vector (1 downto 0);
+	signal ALUSrcA, PCSrc, ALUOp, ALUSrcB : std_logic_vector (1 downto 0);
 	signal opcode                : std_logic_vector (5 downto 0);
 	--signal next_state            : std_logic_vector (3 downto 0);
 
@@ -100,10 +100,10 @@ architecture behavior of multiciclo is
 		Branch, PCWrite, 
 		IorD, MemRead, 
 		MemWrite, MemtoReg, 
-		IRWrite, ALUSrcA, 
+		IRWrite, 
 		RegWrite, RegDst    : out std_logic;
 		
-		PCSrc, ALUOp, 
+		ALUSrcA, PCSrc, ALUOp, 
 		ALUSrcB             : out std_logic_vector (1 downto 0)
 	);
 	end component;
@@ -421,11 +421,12 @@ architecture behavior of multiciclo is
 		b => imm_extend
 	);
 
-	MUXALUA: mux generic map(31) port map(
-		a => pc_current,
-		b => A,
-		s => ALUSrcA,
-		c => A1 -- ALU IN
+	MUXALUA: mux_4_to_1 generic map(31) port map(
+		A => pc_current,
+		B => A,
+		C => "00000000000000000000000000000000",
+		S => ALUSrcA,
+		Z => A1 -- ALU IN
 	);
 
 	MUXALUB: mux_4_to_1 generic map(31) port map(
