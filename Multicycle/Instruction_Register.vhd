@@ -37,9 +37,9 @@ architecture behavior of Instruction_Register is
   	jumpAddr <= addr_Output6;
   	funcCode <= addr_Output7;
 
-    process ( IRWrite, instrucInput ) begin
+    process ( IRWrite, instrucInput ) begin			
         if( IRWrite  = '1' ) then
-          addr_Output1 <= instrucInput(31 downto 26);
+            addr_Output1 <= instrucInput(31 downto 26);
   				addr_Output2 <= instrucInput(25 downto 21);
   				addr_Output3 <= instrucInput(20 downto 16);
   				addr_Output4 <= instrucInput(15 downto 11);

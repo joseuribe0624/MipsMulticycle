@@ -109,6 +109,7 @@ architecture behavior of multiciclo is
 	end component;
 
 	component RegisterFile port (
+		clk					: in std_logic;
 		registerWrite     : in std_logic;
 		registerRead1     : in std_logic_vector(4 downto 0);
 		registerRead2     : in std_logic_vector(4 downto 0);
@@ -158,6 +159,7 @@ architecture behavior of multiciclo is
 	end component;
 
 	component Memory port (
+		clk		 : in std_logic;
 		MemWrite  : in std_logic;
 		MemRead   : in std_logic;
 		address   : in std_logic_vector(31 downto 0);
@@ -327,6 +329,7 @@ architecture behavior of multiciclo is
 	);
 	
 	RAM:  Memory port map (
+		clk		 => CLK,
 		MemWrite  => we_MEM,
 		MemRead   => re_MEM,
 		address   => address,
@@ -394,6 +397,7 @@ architecture behavior of multiciclo is
 	);
 
 	Registers: RegisterFile port map(
+		clk 					=> CLK,
 		registerWrite     => RegWrite,
 		registerRead1     => RS,
 		registerRead2     => RT,
