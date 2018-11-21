@@ -18,9 +18,9 @@ architecture arch of keyboard_register is
   kb_output <= kb_out_0;
 	process (clk) begin
 	    if (rising_edge(clk)) then
-		    if (kb_read = '1') then
+		    --if (kb_read = '1') then
             kb_out_0 <= kb_input;
-          end if;
+          --end if;
 		end if;
 	end process;
 end architecture;

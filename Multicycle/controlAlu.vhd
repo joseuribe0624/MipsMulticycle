@@ -29,7 +29,7 @@ architecture behavioral of controlAlu is begin
 			 end if;
 			 
 			 
-			elsif ( ALUop = "10" ) then -- Branch instruction (como no hay campo func, toca hacer esto)
+			elsif ( ALUop = "01" ) then -- Branch instruction (como no hay campo func, toca hacer esto)
 			  alu_operation <= "011";
 			 
 		  end if;

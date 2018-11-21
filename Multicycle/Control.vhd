@@ -51,7 +51,7 @@ architecture behavior of Control is
 			begin
 				if (reset = '1') then
 						state <= "0001";
-				elsif (clk'event and clk='1') then
+				elsif (falling_edge(clk)) then --(clk'event and clk='1') then
 					state <= next_state;
 				end if;
 		end process;
@@ -246,7 +246,7 @@ architecture behavior of Control is
 				PCWrite 	<= '0';
 				IorD 			<= '0';
 				MemWrite 	<= '0';
-				Branch 		<= 'X';
+				Branch 		<= '0';
 
 		elsif ( state = "1010" ) then -- ALU Writeback
 				next_state 	<= "0001";

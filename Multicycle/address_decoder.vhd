@@ -67,16 +67,16 @@ begin
   rdsel          <= ad_output_9;
   
   process ( address, mem_write, mem_read ) begin
-  	 ad_output_0   <= '0';
-	 ad_output_1   <= '0';
-	 ad_output_2   <= '0';
-	 ad_output_3   <= '0';
-	 ad_output_4   <= '0';
-	 ad_output_5   <= '0';
-	 ad_output_6   <= '0';
-	 ad_output_7   <= '0';
-	 ad_output_8   <= '0';
-	 ad_output_9   <= '0';
+  	 --ad_output_0   <= '0';
+	 --ad_output_1   <= '0';
+	 --ad_output_2   <= '0';
+	 --ad_output_3   <= '0';
+	 --ad_output_4   <= '0';
+	 --ad_output_5   <= '0';
+	 --ad_output_6   <= '0';
+	 --ad_output_7   <= '0';
+	 --ad_output_8   <= '0';
+	 --ad_output_9   <= '0';
 	 
     if    (mem_write = '1') then
 	 
@@ -86,27 +86,109 @@ begin
         -- Miramos en cual dispositivo se quiere escribir especificamente
         if address    = "00000000000000000110000000000000" then
           ad_output_0 <= '1';
+			 --
+			 ad_output_1   <= '0';
+			 ad_output_2   <= '0';
+			 ad_output_3   <= '0';
+			 ad_output_4   <= '0';
+			 ad_output_5   <= '0';
+			 ad_output_6   <= '0';
+			 ad_output_7   <= '0';
+			 ad_output_8   <= '0';
+			 ad_output_9   <= '0';
 
         elsif address = "00000000000000000110000000000001" then
           ad_output_1 <= '1';
+			 --
+			 ad_output_0   <= '0';
+			 ad_output_2   <= '0';
+			 ad_output_3   <= '0';
+			 ad_output_4   <= '0';
+			 ad_output_5   <= '0';
+			 ad_output_6   <= '0';
+			 ad_output_7   <= '0';
+			 ad_output_8   <= '0';
+			 ad_output_9   <= '0';
 
         elsif address = "00000000000000000110000000000010" then
           ad_output_2 <= '1';
+			 --
+			 ad_output_0   <= '0';
+			 ad_output_1   <= '0';
+			 ad_output_3   <= '0';
+			 ad_output_4   <= '0';
+			 ad_output_5   <= '0';
+			 ad_output_6   <= '0';
+			 ad_output_7   <= '0';
+			 ad_output_8   <= '0';
+			 ad_output_9   <= '0';
 
         elsif address = "00000000000000000110000000000011" then
           ad_output_3 <= '1';
+			 --
+			 ad_output_0   <= '0';
+			 ad_output_1   <= '0';
+			 ad_output_2   <= '0';
+			 ad_output_4   <= '0';
+			 ad_output_5   <= '0';
+			 ad_output_6   <= '0';
+			 ad_output_7   <= '0';
+			 ad_output_8   <= '0';
+			 ad_output_9   <= '0';
 
         elsif address = "00000000000000000110000000000100" then
           ad_output_4 <= '1';
+			 --
+			 ad_output_0   <= '0';
+			 ad_output_1   <= '0';
+			 ad_output_2   <= '0';
+			 ad_output_3   <= '0';
+			 ad_output_5   <= '0';
+			 ad_output_6   <= '0';
+			 ad_output_7   <= '0';
+			 ad_output_8   <= '0';
+			 ad_output_9   <= '0';
 
         elsif address = "00000000000000000110000000000101" then
           ad_output_5 <= '1';
+			 --
+      	 ad_output_0   <= '0';
+			 ad_output_1   <= '0';
+			 ad_output_2   <= '0';
+			 ad_output_3   <= '0';
+			 ad_output_4   <= '0';
+			 ad_output_6   <= '0';
+			 ad_output_7   <= '0';
+			 ad_output_8   <= '0';
+			 ad_output_9   <= '0';
+			 
+		  else
+			 ad_output_0   <= '0';
+			 ad_output_1   <= '0';
+			 ad_output_2   <= '0';
+			 ad_output_3   <= '0';
+			 ad_output_4   <= '0';
+			 ad_output_5   <= '0';
+			 ad_output_6   <= '0';
+			 ad_output_7   <= '0';
+			 ad_output_8   <= '0';
+			 ad_output_9   <= '0';
 		  
 		  end if;
 		  
       -- Se quiere escribir en la memoria
       else
         ad_output_6  <= '1';
+		  --
+		  ad_output_0   <= '0';
+		  ad_output_1   <= '0';
+		  ad_output_2   <= '0';
+		  ad_output_3   <= '0';
+		  ad_output_4   <= '0';
+		  ad_output_5   <= '0';
+		  ad_output_7   <= '0';
+		  ad_output_8   <= '0';
+		  ad_output_9   <= '0';
 		  
       end if;
 		
@@ -117,6 +199,26 @@ begin
 			if ( address = "00000000000000000110000000000110" ) then
 			  ad_output_8  <= '1'; -- Read enable kb
 			  ad_output_9  <= '1'; -- Escogemos el kb en el read_data_mux
+			  --
+   		  ad_output_0   <= '0';
+			  ad_output_1   <= '0';
+			  ad_output_2   <= '0';
+			  ad_output_3   <= '0';
+			  ad_output_4   <= '0';
+			  ad_output_5   <= '0';
+			  ad_output_6   <= '0';
+			  ad_output_7   <= '0';
+			else 
+			  ad_output_0   <= '0';
+			  ad_output_1   <= '0';
+			  ad_output_2   <= '0';
+			  ad_output_3   <= '0';
+			  ad_output_4   <= '0';
+			  ad_output_5   <= '0';
+			  ad_output_6   <= '0';
+			  ad_output_7   <= '0';
+			  ad_output_8   <= '0';
+			  ad_output_9   <= '0';
 			end if;
 			
       -- Se quiere leer de la memoria
@@ -124,7 +226,27 @@ begin
         ad_output_7  <= '1'; -- Read enable memory
         ad_output_9  <= '0'; -- Escogemos la memoria en el read_data_mux
         --
+ 		  ad_output_0   <= '0';
+		  ad_output_1   <= '0';
+		  ad_output_2   <= '0';
+		  ad_output_3   <= '0';
+		  ad_output_4   <= '0';
+		  ad_output_5   <= '0';
+		  ad_output_6   <= '0';
+		  ad_output_8   <= '0';
       end if;
+
+	else
+	 ad_output_0   <= '0';
+	 ad_output_1   <= '0';
+	 ad_output_2   <= '0';
+	 ad_output_3   <= '0';
+	 ad_output_4   <= '0';
+	 ad_output_5   <= '0';
+	 ad_output_6   <= '0';
+	 ad_output_7   <= '0';
+	 ad_output_8   <= '0';
+	 ad_output_9   <= '0';
 		
     end if;
   end process;

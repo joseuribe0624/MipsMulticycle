@@ -18,10 +18,6 @@ end RegisterFile;
 architecture behavior of RegisterFile is
 	type reg_type is array (integer range<>) of std_logic_vector (31 downto 0);
 	signal reg_mem : reg_type(0 to 16) := (
-		1 => std_logic_vector(to_unsigned(15, 32)),
-		2 => std_logic_vector(to_unsigned(8, 32)),
-		11 => std_logic_vector(to_unsigned(87, 32)),
-		10 => std_logic_vector(to_unsigned(87, 32)),
 		others => (others => '0')
 	);
 	signal data_out1: std_logic_vector(31 downto 0);
@@ -39,7 +35,7 @@ architecture behavior of RegisterFile is
 		
 		process ( clk, registerWrite, registerWriteData, writeRegister, reg_mem )
 			begin
-				if (falling_edge(clk) and registerWrite = '1') then
+				if (rising_edge(clk) and registerWrite = '1') then
 	          reg_mem(to_integer(unsigned(writeRegister))) <= registerWriteData;
 	      end if;
 		end process;
