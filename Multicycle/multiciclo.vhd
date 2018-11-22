@@ -14,7 +14,8 @@ entity multiciclo is
 end multiciclo;
 
 architecture behavior of multiciclo is
-	signal pc_current, alu_out, 
+	signal pc_current    : std_logic_vector (31 downto 0) := "00000000000000000000000000000000";
+	signal alu_out,
 	address, mdr, data   : std_logic_vector (31 downto 0);
 	signal pc_next       : std_logic_vector (31 downto 0);
 	signal after_address : std_logic_vector (25 downto 0);
