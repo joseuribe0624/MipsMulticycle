@@ -1,8 +1,3 @@
--- TODO: Adecuar todas estas señales para nuestro nuevo datapath.
--- (cambian las señales de selección en los muxs y tenemos que estar seguros
--- que se estén haciendo bien los pre-procesamientos como el PC + 1 o el
--- ALU Out <= sign_extend[25-0] para los jumps)
-
 library ieee;
 use ieee.std_logic_1164.all;
 
@@ -96,7 +91,7 @@ architecture behavior of Control is
 				else
 					ALUSrcA 	<= "00";
 				end if;
-	
+
 				ALUSrcB 	<= "11";
 				ALUOp 		<= "00";
 				--
@@ -136,7 +131,7 @@ architecture behavior of Control is
 				MemRead 	<= '0';
 				RegWrite 	<= '0';
 				Branch 		<= '0';
-				MemtoReg 	<= '0'; -- Data hazards (se alcanza a escribir un dato de la direccion anterior en el rf usando addi)
+				MemtoReg 	<= '0';
 				RegDst 		<= 'X';
 				IorD 			<= 'X';
 

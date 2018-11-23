@@ -12,7 +12,7 @@ entity address_decoder is
     -- Write enables para cada registro de cada 7 segmentos + direcciones de memoria
     w_en_reg_0,   -- Reg numero de sesión,                  DIR: (00000000000000000110000000000000)
     w_en_reg_1, -- Reg duración de sesión 0,                DIR: (00000000000000000110000000000001)
-    
+
 	 w_en_reg_2,   -- Reg numero de circuitos,               DIR: (00000000000000000110000000000010)
     w_en_reg_3,   -- Reg numero de descansos,               DIR: (00000000000000000110000000000011)
 
@@ -21,7 +21,9 @@ entity address_decoder is
 
     w_en_mem, -- Write enable de la memoria
     r_en_mem, -- Read enable memoria
-    r_en_kb,  -- Read enable keyboard, DIR: (00000000000000000110000000000110)
+
+    r_en_kb,  -- Read enable keyboard,    DIR: (00000000000000000110000000000110)
+    w_en_buzz, -- Write enable reg buzzer DIR: (00000000000000000110000000000111)
 
     -- Señal para leer entre kb (keyboard) y mem en el read_data_mux.
     rdsel : out std_logic
@@ -47,11 +49,12 @@ architecture arch of address_decoder is
   signal ad_output_3   : std_logic;
   signal ad_output_4   : std_logic;
   signal ad_output_5   : std_logic;
-  -- 
+  --
   signal ad_output_6   : std_logic;
   signal ad_output_7   : std_logic;
   signal ad_output_8   : std_logic;
   signal ad_output_9   : std_logic;
+  signal ad_output_10   : std_logic;
 
 begin
   w_en_reg_0     <= ad_output_0;
@@ -65,24 +68,15 @@ begin
   r_en_mem       <= ad_output_7;
   r_en_kb        <= ad_output_8;
   rdsel          <= ad_output_9;
-  
+  --
+  w_en_buzz      <= ad_output_10;
+
   process ( address, mem_write, mem_read ) begin
-  	 --ad_output_0   <= '0';
-	 --ad_output_1   <= '0';
-	 --ad_output_2   <= '0';
-	 --ad_output_3   <= '0';
-	 --ad_output_4   <= '0';
-	 --ad_output_5   <= '0';
-	 --ad_output_6   <= '0';
-	 --ad_output_7   <= '0';
-	 --ad_output_8   <= '0';
-	 --ad_output_9   <= '0';
-	 
     if    (mem_write = '1') then
-	 
-      -- Se quiere escribir en un registro para un 7 segmentos
+
+      -- Se quiere escribir en un registro para un 7 segmentos o el Buzzer
       if ( address(14) = '1' and address(13) = '1' ) then
-		
+
         -- Miramos en cual dispositivo se quiere escribir especificamente
         if address    = "00000000000000000110000000000000" then
           ad_output_0 <= '1';
@@ -96,6 +90,7 @@ begin
 			 ad_output_7   <= '0';
 			 ad_output_8   <= '0';
 			 ad_output_9   <= '0';
+       ad_output_10   <= '0';
 
         elsif address = "00000000000000000110000000000001" then
           ad_output_1 <= '1';
@@ -109,6 +104,7 @@ begin
 			 ad_output_7   <= '0';
 			 ad_output_8   <= '0';
 			 ad_output_9   <= '0';
+       ad_output_10   <= '0';
 
         elsif address = "00000000000000000110000000000010" then
           ad_output_2 <= '1';
@@ -122,6 +118,7 @@ begin
 			 ad_output_7   <= '0';
 			 ad_output_8   <= '0';
 			 ad_output_9   <= '0';
+       ad_output_10   <= '0';
 
         elsif address = "00000000000000000110000000000011" then
           ad_output_3 <= '1';
@@ -135,6 +132,7 @@ begin
 			 ad_output_7   <= '0';
 			 ad_output_8   <= '0';
 			 ad_output_9   <= '0';
+       ad_output_10   <= '0';
 
         elsif address = "00000000000000000110000000000100" then
           ad_output_4 <= '1';
@@ -148,11 +146,12 @@ begin
 			 ad_output_7   <= '0';
 			 ad_output_8   <= '0';
 			 ad_output_9   <= '0';
+       ad_output_10   <= '0';
 
         elsif address = "00000000000000000110000000000101" then
           ad_output_5 <= '1';
 			 --
-      	 ad_output_0   <= '0';
+       ad_output_0   <= '0';
 			 ad_output_1   <= '0';
 			 ad_output_2   <= '0';
 			 ad_output_3   <= '0';
@@ -161,7 +160,22 @@ begin
 			 ad_output_7   <= '0';
 			 ad_output_8   <= '0';
 			 ad_output_9   <= '0';
-			 
+       ad_output_10   <= '0';
+
+     elsif address = "00000000000000000110000000000111" then
+       ad_output_10   <= '1';
+       --
+       ad_output_0   <= '0';
+       ad_output_1   <= '0';
+       ad_output_2   <= '0';
+       ad_output_3   <= '0';
+       ad_output_4   <= '0';
+       ad_output_5   <= '0';
+       ad_output_6   <= '0';
+       ad_output_7   <= '0';
+       ad_output_8   <= '0';
+       ad_output_9   <= '0';
+
 		  else
 			 ad_output_0   <= '0';
 			 ad_output_1   <= '0';
@@ -173,9 +187,10 @@ begin
 			 ad_output_7   <= '0';
 			 ad_output_8   <= '0';
 			 ad_output_9   <= '0';
-		  
+       ad_output_10   <= '0';
+
 		  end if;
-		  
+
       -- Se quiere escribir en la memoria
       else
         ad_output_6  <= '1';
@@ -189,11 +204,12 @@ begin
 		  ad_output_7   <= '0';
 		  ad_output_8   <= '0';
 		  ad_output_9   <= '0';
-		  
+      ad_output_10   <= '0';
+
       end if;
-		
+
     elsif (mem_read  = '1') then
-	 
+
       -- Se quiere leer del teclado
       if ( address(14) = '1' and address(13) = '1' ) then
 			if ( address = "00000000000000000110000000000110" ) then
@@ -208,7 +224,8 @@ begin
 			  ad_output_5   <= '0';
 			  ad_output_6   <= '0';
 			  ad_output_7   <= '0';
-			else 
+        ad_output_10   <= '0';
+			else
 			  ad_output_0   <= '0';
 			  ad_output_1   <= '0';
 			  ad_output_2   <= '0';
@@ -219,8 +236,9 @@ begin
 			  ad_output_7   <= '0';
 			  ad_output_8   <= '0';
 			  ad_output_9   <= '0';
+        ad_output_10   <= '0';
 			end if;
-			
+
       -- Se quiere leer de la memoria
       else
         ad_output_7  <= '1'; -- Read enable memory
@@ -234,6 +252,7 @@ begin
 		  ad_output_5   <= '0';
 		  ad_output_6   <= '0';
 		  ad_output_8   <= '0';
+      ad_output_10   <= '0';
       end if;
 
 	else
@@ -247,7 +266,8 @@ begin
 	 ad_output_7   <= '0';
 	 ad_output_8   <= '0';
 	 ad_output_9   <= '0';
-		
+   ad_output_10   <= '0';
+
     end if;
   end process;
 end architecture;
