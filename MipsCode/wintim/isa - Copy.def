@@ -43,12 +43,18 @@ DW:         DEF     32VH#00000000   ; 32-BIT DATA DIRECTIVE (HEXADECIMAL)
 ;**********************************************************************
 ; ASSEMBLY LANGUAGE INSTRUCTIONS
 ;**********************************************************************
-add:    DEF     aluOp,5VB#00000,5VB#00000,5VB#00000,B#00000000,addFxn
-sub:    DEF     aluOp,5VB#00000,5VB#00000,5VB#00000,B#00000000,subFxn
-slt:    DEF     aluOp,5VB#00000,5VB#00000,5VB#00000,B#00000000,sltFxn
-addi:	DEF	addiOp,5VB#00000,5VB#00000,16VB#0000000000000000
-lw:     DEF     lwOp,5VB#00000,5VB#00000,16VB#0000000000000000
-sw:     DEF     swOp,5VB#00000,5VB#00000,16VB#0000000000000000
-beq:    DEF     beqOp,5VB#00000,5VB#00000,16VB#0000000000000000
-j:      DEF     jOp,26VB#00000000000000000000000000
+addr16: EQU     16VB#0000000000000000
+addr26: EQU    26VB#00000000000000000000000000
+shamft:	EQU	B#00000000
+Rs:     EQU     5VB#00000
+Rt:     EQU   5VB#00000
+Rd:     EQU     5VB#00000
+add:    DEF     aluOp,Rs,Rt,Rd,shamft,addFxn
+sub:    DEF     aluOp,Rs,Rt,Rd,shamft,subFxn
+slt:    DEF     aluOp,Rs,Rt,Rd,shamft,sltFxn
+addi:	DEF	addiOp,Rs,Rt,addr16
+lw:     DEF     lwOp,Rs,Rt,addr16
+sw:     DEF     swOp,Rs,Rt,addr16
+beq:    DEF     beqOp,Rs,Rt,addr16
+j:      DEF     jOp,addr26
 END
