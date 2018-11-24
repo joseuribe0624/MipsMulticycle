@@ -3,8 +3,8 @@ LINES 50
 ;-----------------------
 ; PROGRAM AREA
 ;-----------------------
-inicio: addi r0, r4, 1
-sw r0, r4, decode5
+inicio: addi r0, r4, n1
+sw r0, r4, decode5%:
 lw r0, r3, keyboard
 beq r3, r2, selec
 beq r3, r1, programar

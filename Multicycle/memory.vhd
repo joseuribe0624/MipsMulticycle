@@ -16,13 +16,15 @@ end Memory;
 
 architecture behavior of Memory is
 	type MEM is array (integer range<>) of std_logic_vector (31 downto 0);
-	signal ram : MEM(0 to 15) := (
-		0 => "00000101010000000000000000000111", -- addi r10 r0 7 (r0 <= r10 + 7)
-		1 => "00000101010000010000000000010011", -- addi r10 r1 19 (r1 <= r10 + 19)
-		2 => "00001100110000000110000000000000", -- sw r6 r0 1    (mem[r6 + s_seg_reg_0] <= r0)
-		3 => "00001100110000010110000000000001", -- sw r6 r1 1    (mem[r6 + s_seg_reg_1] <= r1)
-		4 => "00010100000000000000000000000000", -- jump 0 (PC <= 0)
-     others => (others => '0')
+	signal ram : MEM(0 to 63) := (
+	0 => "00000100000000110000000000111011", -- addi r0, r3, 59     (r3 <= r0 + 59) (cargar 59 segundos en r3)
+	1 => "00000100000111110000000000000000", -- addi r0, r31, 0     (r30 <= r0 + 0) (set 0 para el contador del delay)
+	2 => "00000000011000010001100000000001", -- sub r3, r1, r3      (r3 <= r3 - r1) (3 clk's) # Restar segundos
+	3 => "00001100000000110110000000000000", -- sw r0, r3, decode3  (2 de la fpga) # Mostrar en 7 segmentos
+   4 => "00010100000000000000000000000010", -- jump 2 (pc <= 2) :   Volver a mostrar el dato, hacer el delay, y restarlo
+	--
+	
+  others => (others => '0')
 	);
 
 	signal data_out1: std_logic_vector (31 downto 0);
