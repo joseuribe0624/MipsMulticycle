@@ -1,0 +1,23 @@
+TITLE EXAMPLE MIPS COMPUTER ASSEMBLY LANGUAGE TEST PROGRAM
+LINES 50
+LIST F,W
+ORG H#00
+; Read in Instruction Macro Definitions
+INCLUDE MIPS.MAC
+;__________________________________________________________________
+;PROGRAM START
+;__________________________________________________________________
+
+START:	LW	R2,DATA0%:,R0
+	LW	R3,DATA1%:,R0
+	ADD	R1,R2,R3
+	SW	R1,DATA3%:,R0
+NOLOOP:	BEQ	R1,R2,NOLOOP%:
+	BEQ	R1,R1,START%:
+;__________________________________________________________________
+; ADDRESSES FOR DATA VALUES
+;__________________________________________________________________
+DATA0:	EQU 0
+DATA1:	EQU 1
+DATA3:	EQU 3
+END
