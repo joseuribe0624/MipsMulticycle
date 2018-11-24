@@ -9,7 +9,8 @@ entity multiciclo is
 		
 		decode_0, decode_1,
 		decode_2, decode_3,
-		decode_4, decode_5  : out std_logic_vector(31 downto 0)		
+		decode_4, decode_5,
+		decode_buzz         : out std_logic_vector(31 downto 0)		
 	);
 end multiciclo;
 
@@ -48,7 +49,7 @@ architecture behavior of multiciclo is
 	
 	-- Address Decoder y I/O
 	signal re_kb, we_MEM, re_MEM, rd_sel, we_0, we_1, we_2, we_3,
-	we_4, we_5                   : std_logic;
+	we_4, we_5, w_en_buzz        : std_logic;
 	signal kb_output, data_mdr   : std_logic_vector(31 downto 0);
 	signal bcd_0, bcd_1, bcd_2, 
 	bcd_3, bcd_4, bcd_state_5    : std_logic_vector(31 downto 0);
@@ -60,7 +61,7 @@ architecture behavior of multiciclo is
 		w_en_reg_2, w_en_reg_3, 
 		w_en_reg_4, w_en_reg_5,
 		r_en_mem, r_en_kb, 
-		w_en_mem, rdsel         : out std_logic
+		w_en_mem, w_en_buzz, rdsel: out std_logic
    );
 	end component;
 	
@@ -243,6 +244,7 @@ architecture behavior of multiciclo is
 
 		w_en_reg_4 => we_4,
 		w_en_reg_5 => we_5,
+		w_en_buzz => w_en_buzz,
 
 		r_en_mem => re_MEM,
 		r_en_kb  => re_kb,
@@ -290,6 +292,13 @@ architecture behavior of multiciclo is
 		data     => B,
 		w_en     => we_5,
 		data_out => bcd_state_5
+	);
+	
+	REGBUZZ: seven_seg_reg generic map(31) port map(
+		clk      => CLK,
+		data     => B,
+		w_en     => w_en_buzz,
+		data_out => decode_buzz
 	);
 	
 	BCD0: bcd_decoder port map (
