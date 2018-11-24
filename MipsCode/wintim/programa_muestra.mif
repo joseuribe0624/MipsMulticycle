@@ -1,0 +1,23 @@
+-- Untitled file
+-- Altera Instruction Memory Initialization File
+Depth = 256;
+Width = 32;
+Address_radix = HEX;
+Data_radix = HEX;
+Content
+Begin
+-- Use NOPS for default instruction memory values
+    [00..FF]: 00000000; -- nop
+-- Place MIPS Instructions here
+-- Note: memory addresses are in words and not bytes
+-- i.e. next location is +1 and not +4
+    00: 04080400;   -- addi r0, r8, n2048
+    01: 090B0000;   -- mostrar: lw r8, r11, n0
+    02: 0C0B6000;   -- sw r0, r11, decode0
+    03: 090B0000;   -- lw r8, r11, n0
+    04: 0C0B6001;   -- sw r0, r11, decode1
+    05: 090B0001;   -- lw r8, r11, n1
+    06: 0C0B6002;   -- sw r0, r11, decode2
+    07: 090B0002;   -- lw r8, r11, n2
+    08: 0C0B6003;   -- sw r0, r11, decode3
+    09: 14000001;   -- j mostrar%:End;

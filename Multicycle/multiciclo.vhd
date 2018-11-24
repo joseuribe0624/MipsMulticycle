@@ -4,7 +4,7 @@ use ieee.std_logic_unsigned.all;
 
 entity multiciclo is
 	port(
-		CLK, RESET          : in std_logic;
+		CLK50, RESET          : in std_logic;
 		keyboard_input      : in std_logic_vector (31 downto 0);
 		
 		decode_0, decode_1,
@@ -30,7 +30,7 @@ architecture behavior of multiciclo is
 	signal Branch, PCWrite, IorD, 
 	MemRead, MemWrite, MemtoReg, 
 	IRWrite, RegWrite, 
-	RegDst                       : std_logic;
+	RegDst, CLK                  : std_logic;
 	
 	signal ALUSrcA, PCSrc, ALUOp, ALUSrcB : std_logic_vector (1 downto 0);
 	signal opcode                : std_logic_vector (5 downto 0);
@@ -54,6 +54,12 @@ architecture behavior of multiciclo is
 	signal bcd_0, bcd_1, bcd_2, 
 	bcd_3, bcd_4, bcd_state_5    : std_logic_vector(31 downto 0);
 
+	component digital_clock_top port (
+		clk50mhz: 	in STD_LOGIC;
+		clk:		out STD_LOGIC
+	);
+	end component;
+	
 	component address_decoder port(
 		address                 : in std_logic_vector (31 downto 0);
 		mem_write, mem_read     : in std_logic;
@@ -212,6 +218,11 @@ architecture behavior of multiciclo is
 	end component;
 
 	begin
+	
+	CLOCK: digital_clock_top port map(
+		clk50mhz => 	CLK50,
+		clk => CLK
+	);
 
 	process(CLK, RESET)
 		begin
